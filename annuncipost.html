@@ -66,8 +66,8 @@
 
   .btn-like {
     min-height: 40px;
-    padding: 8px 20px;
-    font-size: 0.95rem;
+    padding: 8px 16px;
+    font-size: 1.2rem;
     margin-top: 10px;
     background: linear-gradient(180deg, rgba(80,160,255,0.4) 0%, rgba(20,60,120,0.6) 100%);
     border: 1px solid rgba(140,200,255,0.5);
@@ -104,10 +104,10 @@
     <span class="post-info">Pubblicato il 05/10/2026 da <strong>Fronte ★</strong></span>
     <p>Questo sito è una versione adattata sia per mobile che per pc del sito di teenagersITA. Qui presto si potrà giocare al videogioco.</p>
     
-    <!-- Tasto Mi Piace -->
+    <!-- Tasto Mi Piace solo Icona -->
     <div>
-      <button class="btn btn-like" id="like-btn" onclick="toggleLike()">
-        👍 <span id="like-text">Mi Piace</span>
+      <button class="btn btn-like" id="like-btn" onclick="toggleLike()" aria-label="Mi Piace">
+        👍
       </button>
     </div>
   </article>
@@ -121,16 +121,13 @@
 
   function toggleLike() {
     const btn = document.getElementById("like-btn");
-    const textSpan = document.getElementById("like-text");
 
     if (!isLiked) {
       isLiked = true;
       btn.classList.add("liked");
-      textSpan.textContent = "Ti piace";
     } else {
       isLiked = false;
       btn.classList.remove("liked");
-      textSpan.textContent = "Mi Piace";
     }
   }
 </script>
