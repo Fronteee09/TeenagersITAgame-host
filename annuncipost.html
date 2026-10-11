@@ -71,12 +71,13 @@
     margin-top: 10px;
     background: linear-gradient(180deg, rgba(80,160,255,0.4) 0%, rgba(20,60,120,0.6) 100%);
     border: 1px solid rgba(140,200,255,0.5);
+    transition: all 0.2s ease;
   }
 
   .btn-like.liked {
-    background: linear-gradient(180deg, #ff5c8d 0%, #d81f56 100%);
-    border-color: #ff8fb4;
-    box-shadow: 0 0 16px rgba(255,92,141,0.6), inset 0 1px 0 rgba(255,255,255,0.7);
+    background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+    border-color: #60a5fa;
+    box-shadow: 0 0 16px rgba(59,130,246,0.6), inset 0 1px 0 rgba(255,255,255,0.7);
   }
 
   h2 { margin: 0 0 4px; font-size: 1.4rem; color: #fff; text-shadow: 0 0 8px rgba(90,180,255,.6); }
@@ -106,7 +107,7 @@
     <!-- Tasto Mi Piace -->
     <div>
       <button class="btn btn-like" id="like-btn" onclick="toggleLike()">
-        ❤️ <span id="like-text">Mi Piace</span> (<span id="like-count">0</span>)
+        👍 <span id="like-text">Mi Piace</span>
       </button>
     </div>
   </article>
@@ -117,26 +118,20 @@
 
 <script>
   let isLiked = false;
-  let likes = 0;
 
   function toggleLike() {
     const btn = document.getElementById("like-btn");
-    const countSpan = document.getElementById("like-count");
     const textSpan = document.getElementById("like-text");
 
     if (!isLiked) {
-      likes++;
       isLiked = true;
       btn.classList.add("liked");
       textSpan.textContent = "Ti piace";
     } else {
-      likes--;
       isLiked = false;
       btn.classList.remove("liked");
       textSpan.textContent = "Mi Piace";
     }
-
-    countSpan.textContent = likes;
   }
 </script>
 </body>
