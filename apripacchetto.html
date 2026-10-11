@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Apri Pacchetto - TeenagersITA</title>
+<title>Carte - TeenagersITA</title>
 <link rel="icon" href="teenagersitalogo2.png">
 <style>
   * { box-sizing: border-box; }
@@ -58,80 +58,53 @@
     border-radius: 999px;
     background: linear-gradient(180deg, #5cc0ff 0%, #1f7fd8 50%, #0d56ad 51%, #2a96e8 100%);
     box-shadow: 0 0 16px rgba(80,170,255,.6), inset 0 1px 0 rgba(255,255,255,.7);
-    cursor: pointer;
   }
 
   .btn:active { filter: brightness(.9); }
   .btn:focus-visible, a:focus-visible { outline: 3px solid #8fd0ff; outline-offset: 2px; }
 
-  h2 { margin: 0 0 14px; font-size: 1.4rem; color: #fff; text-shadow: 0 0 8px rgba(90,180,255,.6); text-align: center; }
+  h2 { margin: 0 0 14px; font-size: 1.4rem; color: #fff; text-shadow: 0 0 8px rgba(90,180,255,.6); }
 
-  /* Sezione Pacchetti */
-  .packs-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 18px;
-    justify-items: center;
-    margin-top: 20px;
-  }
-
-  .pack-item {
-    background: rgba(5,20,45,.65);
-    border: 1px solid rgba(120,185,255,.35);
-    border-radius: 14px;
-    padding: 16px;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .pack-item:hover {
-    transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 8px 24px rgba(80,170,255,.4);
-  }
-
-  .pack-img {
-    width: 100%;
-    max-width: 160px;
-    height: auto;
-    border-radius: 10px;
-    margin-bottom: 12px;
-  }
-
-  /* Sezione Carte Trovate */
   .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 16px;
-    justify-items: center;
-    margin-top: 20px;
   }
 
   .card-item {
     background: rgba(5,20,45,.65);
     border: 1px solid rgba(120,185,255,.35);
     border-radius: 14px;
-    padding: 10px;
+    padding: 14px;
     text-align: center;
-    animation: fadeIn 0.4s ease-in-out;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(80,170,255,.25);
   }
 
   .card-img {
     width: 100%;
-    max-width: 150px;
+    max-width: 180px;
     height: auto;
     border-radius: 10px;
     border: 1px solid rgba(140,200,255,.3);
+    margin-bottom: 10px;
+    object-fit: cover;
   }
 
-  .controls {
-    text-align: center;
-    margin-top: 24px;
+  .card-item h3 {
+    margin: 0 0 6px;
+    font-size: 1.15rem;
+    color: #fff;
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+  .card-item p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #bcd9f7;
   }
 
   footer { text-align: center; color: #8fb4dc; font-size: .9rem; padding: 10px 0 40px; }
@@ -141,34 +114,79 @@
 <div class="wrap">
 
   <header class="glass">
-    <h1>Spacchettamento</h1>
-    <p>Scegli uno dei pacchetti per trovare 5 carte casuali!</p>
+    <h1>Collezione Carte</h1>
+    <p>Esplora le carte della community di TeenagersITA</p>
     <div>
       <a class="btn" href="index.html">Torna alla Home</a>
     </div>
   </header>
 
   <main class="glass">
-    <h2 id="section-title">Scegli un Pacchetto</h2>
+    <h2>Le Carte Disponibili</h2>
     
-    <!-- Griglia dei Pacchetti -->
-    <div id="packs-container" class="packs-grid">
-      <div class="pack-item" onclick="openPack()">
-        <img class="pack-img" src="copertinapacchetto.png" alt="Pacchetto Carte">
-        <h3>Pacchetto #1</h3>
+    <div class="cards-grid">
+      
+      <!-- Carta Brandix -->
+      <div class="card-item">
+        <img class="card-img" src="brandix.png" alt="Carta Brandix">
+        <h3>Brandix</h3>
+        <p>Carta collezionabile</p>
       </div>
-      <div class="pack-item" onclick="openPack()">
-        <img class="pack-img" src="copertinapacchetto.png" alt="Pacchetto Carte">
-        <h3>Pacchetto #2</h3>
+
+      <!-- Carta Aspro -->
+      <div class="card-item">
+        <img class="card-img" src="aspro.png" alt="Carta Aspro">
+        <h3>Aspro</h3>
+        <p>Carta collezionabile</p>
       </div>
-      <div class="pack-item" onclick="openPack()">
-        <img class="pack-img" src="copertinapacchetto.png" alt="Pacchetto Carte">
-        <h3>Pacchetto #3</h3>
+
+      <!-- Carta Aliexpress -->
+      <div class="card-item">
+        <img class="card-img" src="aliex.png" alt="Carta Aliexpress">
+        <h3>Aliexpress</h3>
+        <p>Carta collezionabile</p>
       </div>
+
+      <!-- Carta Elonmuskiosa -->
+      <div class="card-item">
+        <img class="card-img" src="elonmuskiosa.png" alt="Carta Elonmuskiosa">
+        <h3>Elonmuskiosa</h3>
+        <p>Carta collezionabile</p>
+      </div>
+
+      <!-- Carta Clipp3r -->
+      <div class="card-item">
+        <img class="card-img" src="clipp3r.png" alt="Carta Clipp3r">
+        <h3>Clipp3r</h3>
+        <p>Carta collezionabile</p>
+      </div>
+
+      <!-- Carta Bho76 -->
+      <div class="card-item">
+        <img class="card-img" src="bho76.png" alt="Carta Bho76">
+        <h3>Bho76</h3>
+        <p>Carta collezionabile</p>
+      </div>
+
+      <!-- Carta Fronte -->
+      <div class="card-item">
+        <img class="card-img" src="Fronte.png" alt="Carta Fronte">
+        <h3>Fronte</h3>
+        <p>Carta collezionabile</p>
+      </div>
+
+      <!-- Carta Frontealpino -->
+      <div class="card-item">
+        <img class="card-img" src="frontealpino.png" alt="Carta Frontealpino">
+        <h3>Frontealpino</h3>
+        <p>Carta collezionabile</p>
+      </div>
+
     </div>
+  </main>
 
-    <!-- Griglia delle Carte estratte -->
-    <div id="cards-container" class="cards-grid" style="display: none;"></div>
+  <footer>Carte TeenagersITA · Progetto non ufficiale</footer>
 
-    <!-- Pulsante per aprire un altro pacchetto -->
-    <div id="controls" class="controls" style
+</div>
+</body>
+</html>
