@@ -167,65 +167,8 @@
       </div>
     </div>
 
-    <!-- Griglia delle Carte estratte (nascosta all'inizio) -->
+    <!-- Griglia delle Carte estratte -->
     <div id="cards-container" class="cards-grid" style="display: none;"></div>
 
-    <!-- Pulsante per aprire un altro pacchetto (nascosto all'inizio) -->
-    <div id="controls" class="controls" style="display: none;">
-      <button class="btn" onclick="resetPacks()">Aprine un altro</button>
-    </div>
-  </main>
-
-  <footer>Carte TeenagersITA · Progetto non ufficiale</footer>
-
-</div>
-
-<script>
-  // Lista di tutte le carte disponibili
-  const availableCards = [
-    { name: "Brandix", img: "brandix.png" },
-    { name: "Clipp3r", img: "clipp3r.png" },
-    { name: "Aspro", img: "aspro.png" },
-    { name: "Fronte", img: "Fronte.png" },
-    { name: "Bho76", img: "bho76.png" },
-    { name: "Aliexpress", img: "aliex.png" },
-    { name: "Elonmuskiosa", img: "elonmuskiosa.png" }
-  ];
-
-  function openPack() {
-    // Nascondi i pacchetti e aggiorna il titolo
-    document.getElementById("packs-container").style.display = "none";
-    document.getElementById("section-title").textContent = "Le tue 5 Carte Trovate!";
-
-    const cardsContainer = document.getElementById("cards-container");
-    cardsContainer.innerHTML = "";
-    cardsContainer.style.display = "grid";
-
-    // Estrai 5 carte casuali dalla lista
-    for (let i = 0; i < 5; i++) {
-      const randomIndex = Math.floor(Math.random() * availableCards.length);
-      const card = availableCards[randomIndex];
-
-      const cardElement = document.createElement("div");
-      cardElement.className = "card-item";
-      cardElement.innerHTML = `
-        <img class="card-img" src="${card.img}" alt="${card.name}">
-        <p style="margin-top: 6px; color: #fff; font-weight: 600;">${card.name}</p>
-      `;
-      cardsContainer.appendChild(cardElement);
-    }
-
-    // Mostra il pulsante "Aprine un altro"
-    document.getElementById("controls").style.display = "block";
-  }
-
-  function resetPacks() {
-    // Ripristina la visualizzazione iniziale dei pacchetti
-    document.getElementById("cards-container").style.display = "none";
-    document.getElementById("controls").style.display = "none";
-    document.getElementById("packs-container").style.display = "grid";
-    document.getElementById("section-title").textContent = "Scegli un Pacchetto";
-  }
-</script>
-</body>
-</html>
+    <!-- Pulsante per aprire un altro pacchetto -->
+    <div id="controls" class="controls" style
