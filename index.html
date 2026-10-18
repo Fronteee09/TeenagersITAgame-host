@@ -25,6 +25,7 @@
   .wrap { width: 100%; max-width: 760px; margin: 0 auto; padding: 18px; }
 
   .glass {
+    position: relative;
     background: linear-gradient(180deg, rgba(120,190,255,.22), rgba(20,50,95,.35));
     border: 1px solid rgba(140,200,255,.45);
     border-radius: 16px;
@@ -36,6 +37,19 @@
   }
 
   header.glass { margin-top: 24px; text-align: center; padding: 36px 20px; }
+
+  /* Etichetta versione in alto a destra */
+  .version-tag {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 0.8rem;
+    color: #93c5fd;
+    background: rgba(5, 20, 45, 0.6);
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(140,200,255,0.3);
+  }
 
   .logo {
     width: 120px;
@@ -109,9 +123,12 @@
 <div class="wrap">
 
   <header class="glass">
+    <!-- Numero di versione in alto a destra -->
+    <span class="version-tag">v1.0.0</span>
+
     <img class="logo" src="teenagersitalogo2.png" alt="Logo TeenagersITA">
     <h1>Carte TeenagersITA</h1>
-    <p>La raccolta NON ufficiale delle carte. Scopri le novità e naviga tra le sezioni.</p>
+    <p>La raccolta ufficiale delle carte. Scopri le novità e naviga tra le sezioni.</p>
     <div class="btn-group">
       <a class="btn" href="menugame.html">Gioca</a>
       <a class="btn" href="apripacchetto.html">Apri Pacchetto</a>
@@ -142,7 +159,16 @@
     </ul>
   </section>
 
-  <footer>Carte TeenagersITA · Progetto NON ufficiale</footer>
+  <!-- Box dedicato alle versioni del sito -->
+  <section class="glass" style="text-align: center;">
+    <h2>Versioni del sito</h2>
+    <p>Consulta lo storico di tutti gli aggiornamenti e le modifiche apportate al sito.</p>
+    <div style="margin-top: 14px;">
+      <a class="btn btn-secondary" href="versioni.html">Visita le versioni</a>
+    </div>
+  </section>
+
+  <footer>Carte TeenagersITA · Progetto ufficiale</footer>
 
 </div>
 </body>
