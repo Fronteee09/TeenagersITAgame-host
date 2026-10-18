@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Versioni del Sito - TeenagersITA</title>
+<link rel="icon" href="teenagersitalogo2.png">
+<style>
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+    color: #dbeafe;
+    line-height: 1.6;
+    overflow-x: hidden;
+    background-color: #07152b;
+    background-image: linear-gradient(rgba(3, 10, 22, 0.75), rgba(7, 21, 43, 0.85)), url('sfondo2.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+  .wrap { width: 100%; max-width: 760px; margin: 0 auto; padding: 18px; }
+
+  .glass {
+    background: linear-gradient(180deg, rgba(120,190,255,.22), rgba(20,50,95,.35));
+    border: 1px solid rgba(140,200,255,.45);
+    border-radius: 16px;
+    box-shadow: 0 8px 28px rgba(0,0,0,.6), inset 0 1px 0 rgba(200,230,255,.5);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    margin-bottom: 18px;
+  }
+
+  header.glass { margin-top: 24px; text-align: center; padding: 36px 20px; }
+
+  h1 {
+    margin: 0 0 10px;
+    font-size: clamp(1.8rem, 7vw, 2.8rem);
+    line-height: 1.1;
+    color: #fff;
+    text-shadow: 0 0 14px rgba(90,180,255,.9), 0 2px 4px rgba(0,0,0,.8);
+  }
+  header p { margin: 0 0 22px; color: #bcd9f7; font-size: 1.1rem; }
+
+  .btn {
+    display: inline-block;
+    min-height: 48px;
+    padding: 12px 28px;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    text-shadow: 0 1px 2px rgba(0,20,60,.9);
+    border: 1px solid #6cc0ff;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #5cc0ff 0%, #1f7fd8 50%, #0d56ad 51%, #2a96e8 100%);
+    box-shadow: 0 0 16px rgba(80,170,255,.6), inset 0 1px 0 rgba(255,255,255,.7);
+  }
+
+  .btn:active { filter: brightness(.9); }
+  .btn:focus-visible, a:focus-visible { outline: 3px solid #8fd0ff; outline-offset: 2px; }
+
+  h2 { margin: 0 0 16px; font-size: 1.4rem; color: #fff; text-shadow: 0 0 8px rgba(90,180,255,.6); text-align: center; }
+
+  .versions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .version-item {
+    background: rgba(5,20,45,.55);
+    border: 1px solid rgba(120,185,255,.35);
+    border-radius: 12px;
+    padding: 12px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+  }
+
+  .version-name {
+    color: #fff;
+  }
+
+  .version-date {
+    color: #93c5fd;
+    font-size: 0.95rem;
+  }
+
+  .divider {
+    border: 0;
+    height: 1px;
+    background: rgba(140,200,255,0.3);
+    margin: 20px 0;
+  }
+
+  .section-divider-title {
+    text-align: center;
+    font-size: 1rem;
+    color: #93c5fd;
+    margin: 18px 0 10px;
+    font-style: italic;
+  }
+
+  footer { text-align: center; color: #8fb4dc; font-size: .9rem; padding: 10px 0 40px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="glass">
+    <h1>Versioni del Sito</h1>
+    <p>Storico degli aggiornamenti e dello sviluppo del sito web</p>
+    <div>
+      <a class="btn" href="index.html">Torna alla Home</a>
+    </div>
+  </header>
+
+  <main class="glass">
+    <h2>Cronologia Changelog</h2>
+
+    <div class="versions-list">
+      
+      <div class="version-item">
+        <span class="version-name">Indev 0.8</span>
+        <span class="version-date">18/10/2026</span>
+      </div>
+
+      <div class="version-item">
+        <span class="version-name">Indev 0.7</span>
+        <span class="version-date">05/10/2026</span>
+      </div>
+
+      <div class="version-item">
+        <span class="version-name">Indev 0.6</span>
+        <span class="version-date">26/09/2026</span>
+      </div>
+
+      <div class="version-item">
+        <span class="version-name">Indev 0.5</span>
+        <span class="version-date">07/09/2026</span>
+      </div>
+
+      <div class="section-divider-title">----- Vecchio sito web -----</div>
+
+      <div class="version-item">
+        <span class="version-name">Indev 0.3</span>
+        <span class="version-date">30/08/2026</span>
+      </div>
+
+      <div class="version-item">
+        <span class="version-name">Indev 0.2</span>
+        <span class="version-date">26/08/2026</span>
+      </div>
+
+      <div class="version-item">
+        <span class="version-name">Indev 0.1</span>
+        <span class="version-date">21/08/2026</span>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>Carte TeenagersITA · Progetto ufficiale</footer>
+
+</div>
+</body>
+</html>
