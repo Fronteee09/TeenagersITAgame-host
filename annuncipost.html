@@ -98,15 +98,29 @@
     </div>
   </header>
 
-  <!-- Singolo post dell'annuncio -->
+  <!-- Nuovo Post: Gioco vero e proprio -->
+  <article class="glass">
+    <h2>Ci sarà mai il gioco vero e proprio?</h2>
+    <span class="post-info">Pubblicato il 20/10/2026 alle 17:20 da <strong>Fronte ★</strong></span>
+    <p>Sì, ma al momento escludo di poter generare una versione multiplayer.</p>
+    <p>Il progetto del Gioco è previsto per l'Alpha 1.2 / 1.3. Sarà in singleplayer contro un bot e con missioni settimanali...</p>
+    <p>Per maggiori dettagli si può approfondire sul server Discord!</p>
+    
+    <div>
+      <button class="btn btn-like" onclick="toggleLike(this)" aria-label="Mi Piace">
+        👍
+      </button>
+    </div>
+  </article>
+
+  <!-- Post Precedente: Benvenuti sul Sito -->
   <article class="glass">
     <h2>Benvenuti sul Sito!</h2>
     <span class="post-info">Pubblicato il 05/10/2026 da <strong>Fronte ★</strong></span>
     <p>Questo sito è una versione adattata sia per mobile che per pc del sito di teenagersITA. Qui presto si potrà giocare al videogioco.</p>
     
-    <!-- Tasto Mi Piace solo Icona -->
     <div>
-      <button class="btn btn-like" id="like-btn" onclick="toggleLike()" aria-label="Mi Piace">
+      <button class="btn btn-like" onclick="toggleLike(this)" aria-label="Mi Piace">
         👍
       </button>
     </div>
@@ -117,18 +131,8 @@
 </div>
 
 <script>
-  let isLiked = false;
-
-  function toggleLike() {
-    const btn = document.getElementById("like-btn");
-
-    if (!isLiked) {
-      isLiked = true;
-      btn.classList.add("liked");
-    } else {
-      isLiked = false;
-      btn.classList.remove("liked");
-    }
+  function toggleLike(btn) {
+    btn.classList.toggle("liked");
   }
 </script>
 </body>
