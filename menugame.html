@@ -21,43 +21,84 @@
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
   }
-  .wrap { width: 100%; max-width: 760px; margin: 0 auto; padding: 18px; }
 
-  .glass {
+  .fullscreen-box {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    min-height: auto;
     background: linear-gradient(180deg, rgba(120,190,255,.22), rgba(20,50,95,.35));
     border: 1px solid rgba(140,200,255,.45);
-    border-radius: 16px;
-    box-shadow: 0 8px 28px rgba(0,0,0,.6), inset 0 1px 0 rgba(200,230,255,.5);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    padding: 20px;
-    margin-bottom: 18px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.7), inset 0 1px 0 rgba(200,230,255,.5);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    padding: 36px 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
-  header.glass { margin-top: 24px; text-align: center; padding: 36px 20px; }
+  /* Tastino torna alla home in alto a destra */
+  .home-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+    background: rgba(5, 20, 45, 0.65);
+    border: 1px solid rgba(140,200,255,0.4);
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    transition: all 0.2s ease;
+  }
+
+  .home-btn:active {
+    transform: scale(0.95);
+  }
 
   h1 {
-    margin: 0 0 10px;
-    font-size: clamp(1.8rem, 7vw, 2.8rem);
+    margin: 10px 0 6px;
+    font-size: clamp(2rem, 8vw, 2.8rem);
     line-height: 1.1;
     color: #fff;
     text-shadow: 0 0 14px rgba(90,180,255,.9), 0 2px 4px rgba(0,0,0,.8);
   }
-  header p { margin: 0 0 22px; color: #bcd9f7; font-size: 1.1rem; }
+
+  p {
+    margin: 0 0 28px;
+    color: #bcd9f7;
+    font-size: 1.05rem;
+  }
 
   .btn-group {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
+    width: 100%;
+    max-width: 320px;
   }
 
   .btn {
-    display: inline-block;
-    min-height: 48px;
-    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 24px;
     color: #fff;
+    font-size: 1.1rem;
     font-weight: 600;
     text-decoration: none;
     text-shadow: 0 1px 2px rgba(0,20,60,.9);
@@ -65,47 +106,42 @@
     border-radius: 999px;
     background: linear-gradient(180deg, #5cc0ff 0%, #1f7fd8 50%, #0d56ad 51%, #2a96e8 100%);
     box-shadow: 0 0 16px rgba(80,170,255,.6), inset 0 1px 0 rgba(255,255,255,.7);
+    transition: transform 0.15s ease, filter 0.15s ease;
   }
 
-  .btn-secondary {
-    background: linear-gradient(180deg, rgba(80,140,200,0.5) 0%, rgba(20,50,90,0.7) 100%);
-    border: 1px solid rgba(140,200,255,0.4);
-    box-shadow: 0 0 12px rgba(80,170,255,0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+  .btn:active {
+    transform: scale(0.97);
+    filter: brightness(.9);
   }
 
-  .btn:active { filter: brightness(.9); }
-  .btn:focus-visible, a:focus-visible { outline: 3px solid #8fd0ff; outline-offset: 2px; }
+  .btn:focus-visible, a:focus-visible {
+    outline: 3px solid #8fd0ff;
+    outline-offset: 2px;
+  }
 
-  h2 { margin: 0 0 14px; font-size: 1.4rem; color: #fff; text-shadow: 0 0 8px rgba(90,180,255,.6); }
-  p { margin: 0 0 16px; color: #bcd9f7; }
-
-  footer { text-align: center; color: #8fb4dc; font-size: .9rem; padding: 10px 0 40px; }
+  footer-tag {
+    margin-top: 28px;
+    font-size: 0.85rem;
+    color: #8fb4dc;
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <header class="glass">
-    <h1>Sala Giochi</h1>
-    <p>Seleziona la modalità di gioco con le carte</p>
-    <div>
-      <a class="btn btn-secondary" href="index.html">Torna alla Home</a>
-    </div>
-  </header>
+<div class="fullscreen-box">
+  <!-- Tasto per tornare alla Home -->
+  <a class="home-btn" href="index.html">🏠 Home</a>
 
-  <!-- Box principale con le opzioni di gioco -->
-  <main class="glass">
-    <h2>Modalità di Gioco</h2>
-    <p>Scegli come desideri sfidare gli avversari:</p>
-    
-    <div class="btn-group">
-      <a class="btn" href="twoplayer.html">Due Giocatori</a>
-      <a class="btn" href="vsbot.html">Contro il Bot</a>
-    </div>
-  </main>
+  <h1>Sala Giochi</h1>
+  <p>Scegli come desideri sfidare gli avversari:</p>
 
-  <footer>Carte TeenagersITA · Progetto non ufficiale</footer>
+  <div class="btn-group">
+    <a class="btn" href="twoplayer.html">Due Giocatori</a>
+    <a class="btn" href="vsbot.html">Contro il Bot</a>
+  </div>
 
+  <div class="footer-tag">Carte TeenagersITA · Progetto ufficiale</div>
 </div>
+
 </body>
 </html>
