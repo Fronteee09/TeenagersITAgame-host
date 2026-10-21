@@ -151,7 +151,7 @@
 
   <header class="glass">
     <h1>Pacchetti</h1>
-    <p>Scegli uno dei pacchetti per trovare 5 carte casuali!</p>
+    <p>Scegli uno dei pacchetti per trovare 4 carte casuali!</p>
     <div class="subtitle-disclaimer">scegli un pacchetto per vedere quanto sei fortunato! (i pacchetti non sono e veri e non sono collezionabili al momento)</div>
     <div>
       <a class="btn" href="index.html">Torna alla Home</a>
@@ -191,29 +191,28 @@
 </div>
 
 <script>
-  // Lista completa di tutte le carte disponibili nel mazzo
+  // Lista aggiornata delle carte disponibili
   const availableCards = [
-    { name: "Brandix", img: "brandix.png" },
     { name: "Clipp3r", img: "clipp3r.png" },
-    { name: "Aspro", img: "aspro.png" },
-    { name: "Fronte", img: "Fronte.png" },
     { name: "Bho76", img: "bho76.png" },
-    { name: "Aliexpress", img: "aliex.png" },
-    { name: "Elonmuskiosa", img: "elonmuskiosa.png" },
-    { name: "Frontealpino", img: "frontealpino.png" }
+    { name: "Brandix", img: "brandix.png" },
+    { name: "Aspro", img: "aspro.png" },
+    { name: "Frontealpino", img: "frontealpino.png" },
+    { name: "Fronte", img: "fronte5.png" },
+    { name: "Aliexpress", img: "aliex.png" }
   ];
 
   function openPack() {
     // Nascondi i pacchetti e aggiorna il titolo
     document.getElementById("packs-container").style.display = "none";
-    document.getElementById("section-title").textContent = "Le tue 5 Carte Trovate!";
+    document.getElementById("section-title").textContent = "Le tue 4 Carte Trovate!";
 
     const cardsContainer = document.getElementById("cards-container");
     cardsContainer.innerHTML = "";
     cardsContainer.style.display = "grid";
 
-    // Estrai 5 carte casuali
-    for (let i = 0; i < 5; i++) {
+    // Estrai 4 carte casuali
+    for (let i = 0; i < 4; i++) {
       const randomIndex = Math.floor(Math.random() * availableCards.length);
       const card = availableCards[randomIndex];
 
@@ -221,4 +220,22 @@
       cardElement.className = "card-item";
       cardElement.innerHTML = `
         <img class="card-img" src="${card.img}" alt="${card.name}">
-        <p style="margin-top: 6px; margin-bottom: 0; color: #fff; font-weight
+        <p style="margin-top: 6px; margin-bottom: 0; color: #fff; font-weight: 600;">${card.name}</p>
+      `;
+      cardsContainer.appendChild(cardElement);
+    }
+
+    // Mostra il pulsante "Aprine un altro"
+    document.getElementById("controls").style.display = "block";
+  }
+
+  function resetPacks() {
+    // Ripristina la visualizzazione iniziale dei pacchetti
+    document.getElementById("cards-container").style.display = "none";
+    document.getElementById("controls").style.display = "none";
+    document.getElementById("packs-container").style.display = "grid";
+    document.getElementById("section-title").textContent = "Scegli un Pacchetto";
+  }
+</script>
+</body>
+</html>
