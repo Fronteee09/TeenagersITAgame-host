@@ -84,6 +84,15 @@
   .post-info { font-size: 0.85rem; color: #8fb4dc; margin-bottom: 12px; display: block; }
   p { margin: 0 0 10px; color: #bcd9f7; }
 
+  .post-img {
+    width: 100%;
+    max-height: 260px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid rgba(140,200,255,.3);
+    margin-bottom: 14px;
+  }
+
   footer { text-align: center; color: #8fb4dc; font-size: .9rem; padding: 10px 0 40px; }
 </style>
 </head>
@@ -98,7 +107,24 @@
     </div>
   </header>
 
-  <!-- Nuovo Post: Gioco vero e proprio -->
+  <!-- Nuovo Post: Update dei livelli! -->
+  <article class="glass">
+    <h2>Update dei livelli! Alpha 1.0 release</h2>
+    <span class="post-info">Pubblicato il 21/10/2026 alle 17:22 da <strong>Fronte ★</strong></span>
+    
+    <img src="copertinalivelliupdate1.png" alt="Anteprima Update Livelli" class="post-img">
+    
+    <p>I livelli non sono altro che il risultato dei tuoi match! Al momento è in fase di progettazione e non garantisco che entrerà a far parte del gioco, ma può essere un'ottima base!</p>
+    <p>I livelli saranno incrementati nel gioco una volta aggiunti! A presto!</p>
+    
+    <div>
+      <button class="btn btn-like" onclick="toggleLike(this)" aria-label="Mi Piace">
+        👍
+      </button>
+    </div>
+  </article>
+
+  <!-- Post Precedente: Gioco vero e proprio -->
   <article class="glass">
     <h2>Ci sarà mai il gioco vero e proprio?</h2>
     <span class="post-info">Pubblicato il 20/10/2026 alle 17:20 da <strong>Fronte ★</strong></span>
