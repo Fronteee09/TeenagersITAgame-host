@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Account - TeenagersITA</title>
+<link rel="icon" href="teenagersitalogo2.png">
+<style>
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+    color: #dbeafe;
+    line-height: 1.6;
+    overflow-x: hidden;
+    background-color: #07152b;
+    background-image: linear-gradient(rgba(3, 10, 22, 0.75), rgba(7, 21, 43, 0.85)), url('sfondo2.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+  .wrap { width: 100%; max-width: 520px; margin: 0 auto; padding: 18px; }
+
+  .glass {
+    background: linear-gradient(180deg, rgba(120,190,255,.22), rgba(20,50,95,.35));
+    border: 1px solid rgba(140,200,255,.45);
+    border-radius: 16px;
+    box-shadow: 0 8px 28px rgba(0,0,0,.6), inset 0 1px 0 rgba(200,230,255,.5);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    padding: 24px;
+    margin-bottom: 18px;
+  }
+
+  header.glass { margin-top: 24px; text-align: center; padding: 28px 20px; }
+
+  h1 {
+    margin: 0 0 8px;
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    line-height: 1.1;
+    color: #fff;
+    text-shadow: 0 0 14px rgba(90,180,255,.9), 0 2px 4px rgba(0,0,0,.8);
+  }
+  header p { margin: 0 0 16px; color: #bcd9f7; font-size: 0.95rem; }
+
+  .btn {
+    display: inline-block;
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 20px;
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 1px 2px rgba(0,20,60,.9);
+    border: 1px solid #6cc0ff;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #5cc0ff 0%, #1f7fd8 50%, #0d56ad 51%, #2a96e8 100%);
+    box-shadow: 0 0 16px rgba(80,170,255,.6), inset 0 1px 0 rgba(255,255,255,.7);
+    cursor: pointer;
+    font-size: 0.95rem;
+  }
+
+  .btn:active { filter: brightness(.9); }
+  .btn-secondary {
+    background: linear-gradient(180deg, rgba(80,160,255,0.3) 0%, rgba(20,60,120,0.5) 100%);
+    border: 1px solid rgba(140,200,255,0.4);
+    box-shadow: none;
+    margin-top: 10px;
+  }
+
+  .input-field {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    background: rgba(3, 10, 22, 0.7);
+    border: 1px solid rgba(140, 200, 255, 0.4);
+    border-radius: 10px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+  }
+
+  .input-field:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 8px rgba(96, 165, 250, 0.5);
+  }
+
+  .tabs {
+    display: flex;
+    margin-bottom: 18px;
+    border-bottom: 1px solid rgba(140,200,255,0.3);
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    color: #8fb4dc;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+  }
+
+  .tab-btn.active {
+    color: #fff;
+    border-bottom-color: #60a5fa;
+  }
+
+  .user-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    background: rgba(59, 130, 246, 0.3);
+    border: 1px solid #60a5fa;
+    color: #93c5fd;
+  }
+
+  .admin-badge {
+    background: rgba(234, 179, 8, 0.25);
+    border-color: #facc15;
+    color: #fef08a;
+  }
+
+  .hidden { display: none !important; }
+
+  footer { text-align: center; color: #8fb4dc; font-size: .85rem; padding: 10px 0 30px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="glass">
+    <h1>Gestione Account</h1>
+    <p>Accedi o registrati per accedere ai servizi TeenagersITA</p>
+    <a class="btn btn-secondary" href="annuncipost.html">← Torna agli Annunci</a>
+  </header>
+
+  <!-- FORM AUTENTICAZIONE (Accedi / Registrati) -->
+  <div id="auth-box" class="glass">
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Accedi</button>
+      <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Registrati</button>
+    </div>
+
+    <form id="auth-form" onsubmit="handleSubmit(event)">
+      <input type="email" id="email" class="input-field" placeholder="Email" required>
+      <input type="password" id="password" class="input-field" placeholder="Password" required minlength="6">
+      
+      <button type="submit" id="submit-btn" class="btn">Accedi</button>
+    </form>
+    
+    <p id="auth-error" style="color: #f87171; font-size: 0.85rem; margin-top: 12px; text-align: center;"></p>
+  </div>
+
+  <!-- PANNELLO PROFILO (Visibile dopo il Login) -->
+  <div id="profile-box" class="glass hidden" style="text-align: center;">
+    <span id="role-badge" class="user-badge">Utente</span>
+    <h2 id="user-email-display" style="color: #fff; margin: 10px 0 4px;">user@example.com</h2>
+    <p style="font-size: 0.8rem; color: #8fb4dc; font-family: monospace;" id="user-uid-display"></p>
+    
+    <div style="margin-top: 20px;">
+      <a class="btn" href="annuncipost.html" style="margin-bottom: 10px;">Vai al Portale Annunci</a>
+      <button class="btn btn-secondary" onclick="handleLogout()">Esci dall'Account</button>
+    </div>
+  </div>
+
+  <footer>Carte TeenagersITA · Progetto NON ufficiale</footer>
+
+</div>
+
+<!-- FIREBASE SCRIPT -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { 
+    getAuth, 
+    onAuthStateChanged, 
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword, 
+    signOut 
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCCqjJNoMeliQskPzlMAGOqeF_-aFZuksY",
+    authDomain: "teenagersita-cards.firebaseapp.com",
+    projectId: "teenagersita-cards",
+    storageBucket: "teenagersita-cards.firebasestorage.app",
+    messagingSenderId: "651917703980",
+    appId: "1:651917703980:web:d4c8f87b4645e97c46ca89",
+    measurementId: "G-84P57RTZEV"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const ADMIN_UID = "LRS2V4mx1kOKGZl65J1DYzqRX9q1";
+  let mode = "login";
+
+  // Ascolta lo stato dell'autenticazione
+  onAuthStateChanged(auth, (user) => {
+    const authBox = document.getElementById('auth-box');
+    const profileBox = document.getElementById('profile-box');
+
+    if (user) {
+      authBox.classList.add('hidden');
+      profileBox.classList.remove('hidden');
+
+      document.getElementById('user-email-display').innerText = user.email;
+      document.getElementById('user-uid-display').innerText = "UID: " + user.uid;
+
+      const roleBadge = document.getElementById('role-badge');
+      if (user.uid === ADMIN_UID) {
+        roleBadge.innerText = "★ Amministratore (Fronte)";
+        roleBadge.className = "user-badge admin-badge";
+      } else {
+        roleBadge.innerText = "Utente";
+        roleBadge.className = "user-badge";
+      }
+    } else {
+      authBox.classList.remove('hidden');
+      profileBox.classList.add('hidden');
+    }
+  });
+
+  // Cambia scheda tra Accedi e Registrati
+  window.switchTab = function(newMode) {
+    mode = newMode;
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const submitBtn = document.getElementById('submit-btn');
+    const errorMsg = document.getElementById('auth-error');
+
+    errorMsg.innerText = "";
+
+    if (mode === 'login') {
+      tabLogin.classList.add('active');
+      tabRegister.classList.remove('active');
+      submitBtn.innerText = "Accedi";
+    } else {
+      tabRegister.classList.add('active');
+      tabLogin.classList.remove('active');
+      submitBtn.innerText = "Registrati";
+    }
+  };
+
+  // Gestione Invio Form
+  window.handleSubmit = async function(e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const errorMsg = document.getElementById('auth-error');
+
+    errorMsg.innerText = "";
+
+    try {
+      if (mode === 'login') {
+        await signInWithEmailAndPassword(auth, email, password);
+      } else {
+        await createUserWithEmailAndPassword(auth, email, password);
+      }
+    } catch (err) {
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
+        errorMsg.innerText = "Credenziali non valide.";
+      } else if (err.code === 'auth/email-already-in-use') {
+        errorMsg.innerText = "Email già registrata.";
+      } else if (err.code === 'auth/weak-password') {
+        errorMsg.innerText = "La password deve contenere almeno 6 caratteri.";
+      } else {
+        errorMsg.innerText = "Errore: " + err.message;
+      }
+    }
+  };
+
+  // Logout
+  window.handleLogout = function() {
+    signOut(auth);
+  };
+</script>
+</body>
+</html>
