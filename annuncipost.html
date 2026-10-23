@@ -202,7 +202,7 @@
     </div>
   </header>
 
-  <!-- PANNELLO ADMIN (Visibile solo all'UID Admin specificato) -->
+  <!-- PANNELLO ADMIN (Visibile solo al tuo UID) -->
   <div id="admin-panel" class="glass admin-panel hidden">
     <h2>✍️ Pubblica un nuovo Annuncio</h2>
     <input type="text" id="post-title" class="admin-input" placeholder="Titolo del post...">
@@ -278,11 +278,11 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // UID AMMINISTRATORE RIPRISTINATO
+  // UID AMMINISTRATORE FISSO
   const ADMIN_UID = "LRS2V4mx1kOKGZl65J1DYzqRX9q1"; 
 
   let currentUser = null;
-  let authMode = 'login'; // 'login' o 'register'
+  let authMode = 'login';
 
   // Gestione stato Auth in tempo reale
   onAuthStateChanged(auth, (user) => {
@@ -291,6 +291,7 @@
     const adminPanel = document.getElementById('admin-panel');
 
     if (user) {
+      // Estrae il nome dal nickname prima di @
       let displayName = user.email ? user.email.split('@')[0] : "Utente";
       
       if (user.uid === ADMIN_UID) {
@@ -315,3 +316,197 @@
     document.getElementById('auth-password').value = "";
     
     const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const submitBtn = document.getElementById('auth-submit-btn');
+
+    if (mode === 'login') {
+      tabLogin.classList.add('active');
+      tabRegister.classList.remove('active');
+      submitBtn.innerText = "Accedi";
+    } else {
+      tabRegister.classList.add('active');
+      tabLogin.classList.remove('active');
+      submitBtn.innerText = "Registrati";
+    }
+
+    document.getElementById('auth-modal').classList.remove('hidden');
+  };
+
+  window.switchAuthMode = function(mode) {
+    authMode = mode;
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const submitBtn = document.getElementById('auth-submit-btn');
+    document.getElementById('auth-error').innerText = "";
+
+    if (mode === 'login') {
+      tabLogin.classList.add('active');
+      tabRegister.classList.remove('active');
+      submitBtn.innerText = "Accedi";
+    } else {
+      tabRegister.classList.add('active');
+      tabLogin.classList.remove('active');
+      submitBtn.innerText = "Registrati";
+    }
+  };
+
+  window.closeModal = function() {
+    document.getElementById('auth-modal').classList.add('hidden');
+  };
+
+  window.handleAuthSubmit = async function(e) {
+    e.preventDefault();
+    const inputUser = document.getElementById('auth-nickname').value.trim();
+    const password = document.getElementById('auth-password').value;
+    const errorMsg = document.getElementById('auth-error');
+    errorMsg.innerText = "";
+
+    if (!inputUser) {
+      errorMsg.innerText = "Inserisci un nickname.";
+      return;
+    }
+
+    // Pulisce il nickname e aggiunge il dominio locale fittizio
+    const cleanNick = inputUser.toLowerCase().replace(/[^a-z0-9_]/g, '');
+    const emailToUse = cleanNick + "@teenagersita.local";
+
+    try {
+      if (authMode === 'login') {
+        await signInWithEmailAndPassword(auth, emailToUse, password);
+      } else {
+        await createUserWithEmailAndPassword(auth, emailToUse, password);
+      }
+      closeModal();
+    } catch (err) {
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+        errorMsg.innerText = "Nickname o Password non corretti.";
+      } else if (err.code === 'auth/email-already-in-use') {
+        errorMsg.innerText = "Questo nickname è già registrato!";
+      } else if (err.code === 'auth/weak-password') {
+        errorMsg.innerText = "La password deve avere almeno 6 caratteri.";
+      } else {
+        errorMsg.innerText = "Errore: " + err.message;
+      }
+    }
+  };
+
+  window.handleLogout = function() {
+    signOut(auth);
+  };
+
+  // Pubblica Post (Solo Admin)
+  window.publishPost = async function() {
+    if (!currentUser || currentUser.uid !== ADMIN_UID) {
+      alert("Non hai i permessi per pubblicare!");
+      return;
+    }
+
+    const title = document.getElementById('post-title').value.trim();
+    const imgUrl = document.getElementById('post-img-url').value.trim();
+    const text = document.getElementById('post-text').value.trim();
+
+    if (!title || !text) {
+      alert("Inserisci almeno titolo e testo!");
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "annunci"), {
+        titolo: title,
+        immagine: imgUrl || null,
+        testo: text,
+        autore: "Fronte ★",
+        timestamp: new Date(),
+        likes: []
+      });
+
+      document.getElementById('post-title').value = "";
+      document.getElementById('post-img-url').value = "";
+      document.getElementById('post-text').value = "";
+      alert("Pubblicato con successo!");
+    } catch (e) {
+      alert("Errore durante la pubblicazione: " + e.message);
+    }
+  };
+
+  // Gestione Like Persistenti
+  window.toggleLike = async function(postId) {
+    if (!currentUser) {
+      alert("Devi effettuare l'accesso per mettere Mi piace!");
+      openModal('login');
+      return;
+    }
+
+    const postRef = doc(db, "annunci", postId);
+    try {
+      const btn = document.getElementById(`like-btn-${postId}`);
+      const isLiked = btn.classList.contains("liked");
+
+      if (isLiked) {
+        await updateDoc(postRef, {
+          likes: arrayRemove(currentUser.uid)
+        });
+      } else {
+        await updateDoc(postRef, {
+          likes: arrayUnion(currentUser.uid)
+        });
+      }
+    } catch (e) {
+      console.error("Errore like:", e);
+    }
+  };
+
+  // Caricamento Post in tempo reale
+  function loadPosts() {
+    const q = query(collection(db, "annunci"), orderBy("timestamp", "desc"));
+
+    onSnapshot(q, (snapshot) => {
+      const container = document.getElementById('posts-container');
+      container.innerHTML = "";
+
+      if (snapshot.empty) {
+        container.innerHTML = "<p style='text-align: center; color: #bcd9f7;'>Nessun annuncio presente.</p>";
+        return;
+      }
+
+      snapshot.docs.forEach((docSnap) => {
+        const data = docSnap.data();
+        const postId = docSnap.id;
+        
+        let dateStr = "Di recente";
+        if (data.timestamp) {
+          const d = data.timestamp.toDate();
+          dateStr = `Pubblicato il ${d.toLocaleDateString('it-IT')} alle ${d.toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'})}`;
+        }
+
+        const likesArray = data.likes || [];
+        const userHasLiked = currentUser && likesArray.includes(currentUser.uid);
+        const likeCount = likesArray.length;
+
+        const article = document.createElement('article');
+        article.className = 'glass';
+
+        let imgHTML = data.immagine ? `<img src="${data.immagine}" alt="${data.titolo}" class="post-img">` : '';
+        const paragraphs = data.testo.split('\n').map(p => `<p>${p}</p>`).join('');
+
+        article.innerHTML = `
+          <h2>${data.titolo}</h2>
+          <span class="post-info">${dateStr} da <strong>${data.autore || 'Fronte ★'}</strong></span>
+          ${imgHTML}
+          ${paragraphs}
+          <div>
+            <button id="like-btn-${postId}" class="btn btn-like ${userHasLiked ? 'liked' : ''}" onclick="toggleLike('${postId}')">
+              👍 Mi piace <span style="font-size: 0.9rem; opacity: 0.9;">(${likeCount})</span>
+            </button>
+          </div>
+        `;
+
+        container.appendChild(article);
+      });
+    });
+  }
+
+  loadPosts();
+</script>
+</body>
+</html>
