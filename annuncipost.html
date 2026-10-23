@@ -196,8 +196,8 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // Inserisci qui il tuo UID preso dalla scheda Authentication di Firebase
-  const ADMIN_UID = "IL_TUO_UID_DI_FIREBASE"; 
+  // IL TUO UID CONFIGURATO
+  const ADMIN_UID = "LRS2V4mx1kOKGZl65J1DYzqRX9q1"; 
 
   let currentUser = null;
 
@@ -209,7 +209,7 @@
 
     if (user) {
       authBtn.innerText = "Esci";
-      // Mostra il pannello di pubblicazione solo se l'UID corrisponde a Fronte
+      // Mostra il pannello di pubblicazione solo se l'UID corrisponde al tuo
       if (user.uid === ADMIN_UID) {
         adminPanel.classList.remove('hidden');
       } else {
