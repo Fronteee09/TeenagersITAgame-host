@@ -66,10 +66,17 @@
     background: linear-gradient(180deg, #5cc0ff 0%, #1f7fd8 50%, #0d56ad 51%, #2a96e8 100%);
     box-shadow: 0 0 16px rgba(80,170,255,.6), inset 0 1px 0 rgba(255,255,255,.7);
     cursor: pointer;
+    font-size: 0.95rem;
   }
 
   .btn:active { filter: brightness(.9); }
   .btn:focus-visible, a:focus-visible { outline: 3px solid #8fd0ff; outline-offset: 2px; }
+
+  .btn-secondary {
+    background: linear-gradient(180deg, rgba(80,160,255,0.3) 0%, rgba(20,60,120,0.5) 100%);
+    border: 1px solid rgba(140,200,255,0.4);
+    box-shadow: none;
+  }
 
   .btn-like {
     min-height: 40px;
@@ -102,7 +109,7 @@
     width: 100%;
     padding: 12px;
     margin-bottom: 12px;
-    background: rgba(3, 10, 22, 0.7);
+    background: rgba(3, 10, 22, 0.75);
     border: 1px solid rgba(140, 200, 255, 0.4);
     border-radius: 10px;
     color: #fff;
@@ -134,6 +141,42 @@
     margin-bottom: 14px;
   }
 
+  /* MODALE OVERLAY LOGIN */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(3, 10, 22, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+
+  .modal-card {
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    background: none;
+    border: none;
+    color: #8fb4dc;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+
+  .modal-close:hover { color: #fff; }
+
   .hidden { display: none !important; }
 
   footer { text-align: center; color: #8fb4dc; font-size: .9rem; padding: 10px 0 40px; }
@@ -147,11 +190,11 @@
     <p>Tutti gli aggiornamenti sul progetto TeenagersITA</p>
     <div class="header-buttons">
       <a class="btn" href="index.html">Torna alla Home</a>
-      <button id="auth-btn" class="btn" onclick="handleAuthAction()">Accedi Admin</button>
+      <button id="auth-btn" class="btn btn-secondary" onclick="toggleLoginModal(true)">Accedi Admin</button>
     </div>
   </header>
 
-  <!-- FORM PUBBLICAZIONE (Nascosto di default, visibile solo a te) -->
+  <!-- FORM PUBBLICAZIONE (Nascosto di default, visibile solo se riconosciuto come Admin) -->
   <div id="admin-panel" class="glass admin-panel hidden">
     <h2>✍️ Pubblica un nuovo Annuncio</h2>
     <input type="text" id="post-title" class="admin-input" placeholder="Titolo del post...">
@@ -169,10 +212,32 @@
 
 </div>
 
+<!-- FINETRA MODALE DI LOGIN INTEGRATA -->
+<div id="login-modal" class="modal-overlay hidden">
+  <div class="glass modal-card">
+    <button class="modal-close" onclick="toggleLoginModal(false)">&times;</button>
+    <h2 style="text-align: center; margin-bottom: 16px;">🔑 Accesso Amministratore</h2>
+    
+    <form onsubmit="handleLoginSubmit(event)">
+      <input type="email" id="login-email" class="admin-input" placeholder="Email" required>
+      <input type="password" id="login-password" class="admin-input" placeholder="Password" required>
+      
+      <button type="submit" class="btn" style="width: 100%; margin-top: 8px;">Accedi</button>
+    </form>
+    
+    <p id="login-error" style="color: #f87171; font-size: 0.85rem; margin-top: 14px; text-align: center; margin-bottom: 0;"></p>
+  </div>
+</div>
+
 <!-- FIREBASE SCRIPT -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { 
+    getAuth, 
+    onAuthStateChanged, 
+    signInWithEmailAndPassword, 
+    signOut 
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   import { 
     getFirestore, 
     collection, 
@@ -196,42 +261,84 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // IL TUO UID CONFIGURATO
+  // Il tuo User UID per riconoscere l'Admin
   const ADMIN_UID = "LRS2V4mx1kOKGZl65J1DYzqRX9q1"; 
 
   let currentUser = null;
 
-  // Controllo Autenticazione
+  // Ascolta lo stato dell'autenticazione Firebase
   onAuthStateChanged(auth, (user) => {
     currentUser = user;
     const authBtn = document.getElementById('auth-btn');
     const adminPanel = document.getElementById('admin-panel');
 
     if (user) {
-      authBtn.innerText = "Esci";
-      // Mostra il pannello di pubblicazione solo se l'UID corrisponde al tuo
       if (user.uid === ADMIN_UID) {
+        authBtn.innerText = "Esci (Fronte ★)";
+        authBtn.onclick = handleLogout;
         adminPanel.classList.remove('hidden');
       } else {
+        // Se si collega un utente normale non admin
+        authBtn.innerText = "Esci";
+        authBtn.onclick = handleLogout;
         adminPanel.classList.add('hidden');
       }
     } else {
       authBtn.innerText = "Accedi Admin";
+      authBtn.onclick = () => toggleLoginModal(true);
       adminPanel.classList.add('hidden');
     }
   });
 
-  // Gestione Bottone Login / Logout
-  window.handleAuthAction = function() {
-    if (currentUser) {
-      signOut(auth);
+  // Apri / Chiudi la finestra modale di login
+  window.toggleLoginModal = function(show) {
+    const modal = document.getElementById('login-modal');
+    const errorMsg = document.getElementById('login-error');
+    errorMsg.innerText = "";
+
+    if (show) {
+      modal.classList.remove('hidden');
     } else {
-      window.location.href = "account.html";
+      modal.classList.add('hidden');
     }
   };
 
-  // Funzione per creare e pubblicare il post su Firestore
+  // Esegui il Login
+  window.handleLoginSubmit = async function(e) {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const errorMsg = document.getElementById('login-error');
+
+    errorMsg.innerText = "";
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      // Pulisce il form e chiude la finestra
+      document.getElementById('login-email').value = "";
+      document.getElementById('login-password').value = "";
+      toggleLoginModal(false);
+    } catch (err) {
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
+        errorMsg.innerText = "Email o Password non corrette.";
+      } else {
+        errorMsg.innerText = "Errore di accesso: " + err.message;
+      }
+    }
+  };
+
+  // Logout
+  window.handleLogout = function() {
+    signOut(auth);
+  };
+
+  // Pubblica un nuovo annuncio
   window.publishPost = async function() {
+    if (!currentUser || currentUser.uid !== ADMIN_UID) {
+      alert("Operazione non consentita! Devi essere autenticato come Admin.");
+      return;
+    }
+
     const title = document.getElementById('post-title').value.trim();
     const imgUrl = document.getElementById('post-img-url').value.trim();
     const text = document.getElementById('post-text').value.trim();
@@ -250,18 +357,18 @@
         timestamp: new Date()
       });
 
-      // Pulisce i campi di input
+      // Reset campi di testo
       document.getElementById('post-title').value = "";
       document.getElementById('post-img-url').value = "";
       document.getElementById('post-text').value = "";
       
-      alert("Post pubblicato con successo!");
+      alert("Annuncio pubblicato con successo!");
     } catch (e) {
       alert("Errore durante la pubblicazione: " + e.message);
     }
   };
 
-  // Carica i post da Firestore mantenendo lo stile Glassmorphism
+  // Carica in tempo reale tutti i post dal database
   function loadPosts() {
     const q = query(collection(db, "annunci"), orderBy("timestamp", "desc"));
 
@@ -277,7 +384,6 @@
       snapshot.docs.forEach((docSnap) => {
         const data = docSnap.data();
         
-        // Formattazione data italiana
         let dateStr = "Di recente";
         if (data.timestamp) {
           const d = data.timestamp.toDate();
@@ -288,8 +394,6 @@
         article.className = 'glass';
 
         let imgHTML = data.immagine ? `<img src="${data.immagine}" alt="${data.titolo}" class="post-img">` : '';
-        
-        // Converte i ritorni a capo (\n) in paragrafi puliti
         const paragraphs = data.testo.split('\n').map(p => `<p>${p}</p>`).join('');
 
         article.innerHTML = `
