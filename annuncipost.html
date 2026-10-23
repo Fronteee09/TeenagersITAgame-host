@@ -46,6 +46,13 @@
   }
   header p { margin: 0 0 22px; color: #bcd9f7; font-size: 1.1rem; }
 
+  .header-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
   .btn {
     display: inline-block;
     min-height: 48px;
@@ -80,6 +87,40 @@
     box-shadow: 0 0 16px rgba(59,130,246,0.6), inset 0 1px 0 rgba(255,255,255,0.7);
   }
 
+  /* STILI PANNELLO ADMIN CREAZIONE POST */
+  .admin-panel {
+    border-color: #60a5fa;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+  }
+
+  .admin-panel h2 {
+    color: #93c5fd;
+    margin-bottom: 12px;
+  }
+
+  .admin-input, .admin-textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    background: rgba(3, 10, 22, 0.7);
+    border: 1px solid rgba(140, 200, 255, 0.4);
+    border-radius: 10px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+  }
+
+  .admin-input:focus, .admin-textarea:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 8px rgba(96, 165, 250, 0.5);
+  }
+
+  .admin-textarea {
+    height: 120px;
+    resize: vertical;
+  }
+
   h2 { margin: 0 0 4px; font-size: 1.4rem; color: #fff; text-shadow: 0 0 8px rgba(90,180,255,.6); }
   .post-info { font-size: 0.85rem; color: #8fb4dc; margin-bottom: 12px; display: block; }
   p { margin: 0 0 10px; color: #bcd9f7; }
@@ -93,6 +134,8 @@
     margin-bottom: 14px;
   }
 
+  .hidden { display: none !important; }
+
   footer { text-align: center; color: #8fb4dc; font-size: .9rem; padding: 10px 0 40px; }
 </style>
 </head>
@@ -102,64 +145,175 @@
   <header class="glass">
     <h1>Annunci e Post</h1>
     <p>Tutti gli aggiornamenti sul progetto TeenagersITA</p>
-    <div>
+    <div class="header-buttons">
       <a class="btn" href="index.html">Torna alla Home</a>
+      <button id="auth-btn" class="btn" onclick="handleAuthAction()">Accedi Admin</button>
     </div>
   </header>
 
-  <!-- Nuovo Post: Update dei livelli! -->
-  <article class="glass">
-    <h2>Update dei livelli! Alpha 1.0 release</h2>
-    <span class="post-info">Pubblicato il 21/10/2026 alle 17:22 da <strong>Fronte ★</strong></span>
-    
-    <img src="copertinalivelliupdate1.png" alt="Anteprima Update Livelli" class="post-img">
-    
-    <p>I livelli non sono altro che il risultato dei tuoi match! Al momento è in fase di progettazione e non garantisco che entrerà a far parte del gioco, ma può essere un'ottima base!</p>
-    <p>I livelli saranno incrementati nel gioco una volta aggiunti! A presto!</p>
-    
-    <div>
-      <button class="btn btn-like" onclick="toggleLike(this)" aria-label="Mi Piace">
-        👍
-      </button>
-    </div>
-  </article>
+  <!-- FORM PUBBLICAZIONE (Nascosto di default, visibile solo a te) -->
+  <div id="admin-panel" class="glass admin-panel hidden">
+    <h2>✍️ Pubblica un nuovo Annuncio</h2>
+    <input type="text" id="post-title" class="admin-input" placeholder="Titolo del post...">
+    <input type="text" id="post-img-url" class="admin-input" placeholder="Nome o URL Immagine (es. copertinalivelliupdate1.png) - Opzionale">
+    <textarea id="post-text" class="admin-textarea" placeholder="Scrivi il contenuto dell'annuncio..."></textarea>
+    <button class="btn" onclick="publishPost()">Pubblica Post</button>
+  </div>
 
-  <!-- Post Precedente: Gioco vero e proprio -->
-  <article class="glass">
-    <h2>Ci sarà mai il gioco vero e proprio?</h2>
-    <span class="post-info">Pubblicato il 20/10/2026 alle 17:20 da <strong>Fronte ★</strong></span>
-    <p>Sì, ma al momento escludo di poter generare una versione multiplayer.</p>
-    <p>Il progetto del Gioco è previsto per l'Alpha 1.2 / 1.3. Sarà in singleplayer contro un bot e con missioni settimanali...</p>
-    <p>Per maggiori dettagli si può approfondire sul server Discord!</p>
-    
-    <div>
-      <button class="btn btn-like" onclick="toggleLike(this)" aria-label="Mi Piace">
-        👍
-      </button>
-    </div>
-  </article>
-
-  <!-- Post Precedente: Benvenuti sul Sito -->
-  <article class="glass">
-    <h2>Benvenuti sul Sito!</h2>
-    <span class="post-info">Pubblicato il 05/10/2026 da <strong>Fronte ★</strong></span>
-    <p>Questo sito è una versione adattata sia per mobile che per pc del sito di teenagersITA. Qui presto si potrà giocare al videogioco.</p>
-    
-    <div>
-      <button class="btn btn-like" onclick="toggleLike(this)" aria-label="Mi Piace">
-        👍
-      </button>
-    </div>
-  </article>
+  <!-- CONTENITORE DINAMICO DEI POST -->
+  <div id="posts-container">
+    <p style="text-align: center; color: #bcd9f7;">Caricamento post in corso...</p>
+  </div>
 
   <footer>Carte TeenagersITA · Progetto NON ufficiale</footer>
 
 </div>
 
-<script>
-  function toggleLike(btn) {
-    btn.classList.toggle("liked");
+<!-- FIREBASE SCRIPT -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { 
+    getFirestore, 
+    collection, 
+    addDoc, 
+    onSnapshot, 
+    query, 
+    orderBy 
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCCqjJNoMeliQskPzlMAGOqeF_-aFZuksY",
+    authDomain: "teenagersita-cards.firebaseapp.com",
+    projectId: "teenagersita-cards",
+    storageBucket: "teenagersita-cards.firebasestorage.app",
+    messagingSenderId: "651917703980",
+    appId: "1:651917703980:web:d4c8f87b4645e97c46ca89",
+    measurementId: "G-84P57RTZEV"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Inserisci qui il tuo UID preso dalla scheda Authentication di Firebase
+  const ADMIN_UID = "IL_TUO_UID_DI_FIREBASE"; 
+
+  let currentUser = null;
+
+  // Controllo Autenticazione
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+    const authBtn = document.getElementById('auth-btn');
+    const adminPanel = document.getElementById('admin-panel');
+
+    if (user) {
+      authBtn.innerText = "Esci";
+      // Mostra il pannello di pubblicazione solo se l'UID corrisponde a Fronte
+      if (user.uid === ADMIN_UID) {
+        adminPanel.classList.remove('hidden');
+      } else {
+        adminPanel.classList.add('hidden');
+      }
+    } else {
+      authBtn.innerText = "Accedi Admin";
+      adminPanel.classList.add('hidden');
+    }
+  });
+
+  // Gestione Bottone Login / Logout
+  window.handleAuthAction = function() {
+    if (currentUser) {
+      signOut(auth);
+    } else {
+      window.location.href = "account.html";
+    }
+  };
+
+  // Funzione per creare e pubblicare il post su Firestore
+  window.publishPost = async function() {
+    const title = document.getElementById('post-title').value.trim();
+    const imgUrl = document.getElementById('post-img-url').value.trim();
+    const text = document.getElementById('post-text').value.trim();
+
+    if (!title || !text) {
+      alert("Inserisci almeno il titolo e il testo del post!");
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "annunci"), {
+        titolo: title,
+        immagine: imgUrl || null,
+        testo: text,
+        autore: "Fronte ★",
+        timestamp: new Date()
+      });
+
+      // Pulisce i campi di input
+      document.getElementById('post-title').value = "";
+      document.getElementById('post-img-url').value = "";
+      document.getElementById('post-text').value = "";
+      
+      alert("Post pubblicato con successo!");
+    } catch (e) {
+      alert("Errore durante la pubblicazione: " + e.message);
+    }
+  };
+
+  // Carica i post da Firestore mantenendo lo stile Glassmorphism
+  function loadPosts() {
+    const q = query(collection(db, "annunci"), orderBy("timestamp", "desc"));
+
+    onSnapshot(q, (snapshot) => {
+      const container = document.getElementById('posts-container');
+      container.innerHTML = "";
+
+      if (snapshot.empty) {
+        container.innerHTML = "<p style='text-align: center; color: #bcd9f7;'>Nessun annuncio presente.</p>";
+        return;
+      }
+
+      snapshot.docs.forEach((docSnap) => {
+        const data = docSnap.data();
+        
+        // Formattazione data italiana
+        let dateStr = "Di recente";
+        if (data.timestamp) {
+          const d = data.timestamp.toDate();
+          dateStr = `Pubblicato il ${d.toLocaleDateString('it-IT')} alle ${d.toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'})}`;
+        }
+
+        const article = document.createElement('article');
+        article.className = 'glass';
+
+        let imgHTML = data.immagine ? `<img src="${data.immagine}" alt="${data.titolo}" class="post-img">` : '';
+        
+        // Converte i ritorni a capo (\n) in paragrafi puliti
+        const paragraphs = data.testo.split('\n').map(p => `<p>${p}</p>`).join('');
+
+        article.innerHTML = `
+          <h2>${data.titolo}</h2>
+          <span class="post-info">${dateStr} da <strong>${data.autore || 'Fronte ★'}</strong></span>
+          ${imgHTML}
+          ${paragraphs}
+          <div>
+            <button class="btn btn-like" onclick="toggleLike(this)" aria-label="Mi Piace">
+              👍
+            </button>
+          </div>
+        `;
+
+        container.appendChild(article);
+      });
+    });
   }
+
+  window.toggleLike = function(btn) {
+    btn.classList.toggle("liked");
+  };
+
+  loadPosts();
 </script>
 </body>
 </html>
