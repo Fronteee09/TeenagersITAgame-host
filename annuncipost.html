@@ -70,11 +70,6 @@
   }
 
   .btn:active { filter: brightness(.9); }
-  .btn-secondary {
-    background: linear-gradient(180deg, rgba(80,160,255,0.3) 0%, rgba(20,60,120,0.5) 100%);
-    border: 1px solid rgba(140,200,255,0.4);
-    box-shadow: none;
-  }
 
   .btn-like {
     min-height: 40px;
@@ -95,85 +90,10 @@
     box-shadow: 0 0 16px rgba(59,130,246,0.6), inset 0 1px 0 rgba(255,255,255,0.7);
   }
 
-  .admin-panel {
-    border-color: #60a5fa;
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
-  }
-
-  .admin-panel h2 { color: #93c5fd; margin-bottom: 12px; }
-
-  .admin-input, .admin-textarea {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 12px;
-    background: rgba(3, 10, 22, 0.75);
-    border: 1px solid rgba(140, 200, 255, 0.4);
-    border-radius: 10px;
-    color: #fff;
-    font-family: inherit;
-    font-size: 0.95rem;
-    outline: none;
-  }
-
-  .admin-input:focus, .admin-textarea:focus {
-    border-color: #60a5fa;
-    box-shadow: 0 0 8px rgba(96, 165, 250, 0.5);
-  }
-
-  .admin-textarea { height: 120px; resize: vertical; }
-
   h2 { margin: 0 0 4px; font-size: 1.4rem; color: #fff; text-shadow: 0 0 8px rgba(90,180,255,.6); }
   .post-info { font-size: 0.85rem; color: #8fb4dc; margin-bottom: 12px; display: block; }
   p { margin: 0 0 10px; color: #bcd9f7; }
 
-  .post-img {
-    width: 100%;
-    max-height: 260px;
-    object-fit: cover;
-    border-radius: 10px;
-    border: 1px solid rgba(140,200,255,.3);
-    margin-bottom: 14px;
-  }
-
-  /* MODALE AUTH ACCESSO */
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(3, 10, 22, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    padding: 20px;
-  }
-
-  .modal-card { width: 100%; max-width: 420px; position: relative; }
-
-  .modal-close {
-    position: absolute;
-    top: 14px;
-    right: 18px;
-    background: none;
-    border: none;
-    color: #8fb4dc;
-    font-size: 1.5rem;
-    cursor: pointer;
-  }
-  .modal-close:hover { color: #fff; }
-
-  .modal-title {
-    font-size: 1.3rem;
-    color: #fff;
-    margin-bottom: 16px;
-    text-align: center;
-  }
-
-  .hidden { display: none !important; }
   footer { text-align: center; color: #8fb4dc; font-size: .9rem; padding: 10px 0 40px; }
 </style>
 </head>
@@ -185,331 +105,85 @@
     <p>Tutti gli aggiornamenti sul progetto TeenagersITA</p>
     <div class="header-buttons">
       <a class="btn" href="index.html">Torna alla Home</a>
-      <button id="auth-btn" class="btn btn-secondary" onclick="openModal()">Accedi</button>
     </div>
   </header>
 
-  <!-- PANNELLO ADMIN (Visibile solo all'UID Admin) -->
-  <div id="admin-panel" class="glass admin-panel hidden">
-    <h2>✍️ Pubblica un nuovo Annuncio</h2>
-    <input type="text" id="post-title" class="admin-input" placeholder="Titolo del post...">
-    <input type="text" id="post-img-url" class="admin-input" placeholder="URL Immagine (opzionale)">
-    <textarea id="post-text" class="admin-textarea" placeholder="Scrivi il contenuto dell'annuncio..."></textarea>
-    <button class="btn" onclick="publishPost()">Pubblica Post</button>
-  </div>
-
   <!-- POSTS CONTAINER -->
   <div id="posts-container">
-    <p style="text-align: center; color: #bcd9f7;">Caricamento post in corso...</p>
+    
+    <!-- Post Alpha 1.0 -->
+    <article class="glass">
+      <h2>Alpha 1.0</h2>
+      <span class="post-info">Pubblicato il 15/10/2026 da <strong>Fronte ★</strong></span>
+      <p>Aggiunti i livelli e inizio del gioco</p>
+      <div>
+        <button id="like-btn-alpha-1-0" class="btn btn-like" onclick="toggleLike('alpha-1-0')">
+          👍 Mi piace <span id="like-count-alpha-1-0" style="font-size: 0.9rem; opacity: 0.9;">(0)</span>
+        </button>
+      </div>
+    </article>
+
+    <!-- Post Indev 0.9 -->
+    <article class="glass">
+      <h2>Indev 0.9</h2>
+      <span class="post-info">Pubblicato il 10/10/2026 da <strong>Fronte ★</strong></span>
+      <p>Aggiunto local storage</p>
+      <div>
+        <button id="like-btn-indev-0-9" class="btn btn-like" onclick="toggleLike('indev-0-9')">
+          👍 Mi piace <span id="like-count-indev-0-9" style="font-size: 0.9rem; opacity: 0.9;">(0)</span>
+        </button>
+      </div>
+    </article>
+
   </div>
 
   <footer>Carte TeenagersITA · Progetto NON ufficiale</footer>
 
 </div>
 
-<!-- MODALE ACCESSO (SOLO LOGIN) -->
-<div id="auth-modal" class="modal-overlay hidden">
-  <div class="glass modal-card">
-    <button class="modal-close" onclick="closeModal()">&times;</button>
+<script>
+  // Gestione Like locale (salvata nel browser in modo sicuro e senza errori)
+  function updateLikesUI() {
+    const likesData = JSON.parse(localStorage.getItem('teenagersita_likes') || '{}');
     
-    <div class="modal-title">Accedi al tuo account</div>
-
-    <form onsubmit="handleAuthSubmit(event)">
-      <input type="text" id="auth-nickname" class="admin-input" placeholder="Il tuo Nickname (es. Fronte)" required autocomplete="username">
-      <input type="password" id="auth-password" class="admin-input" placeholder="Password" required autocomplete="current-password">
+    ['alpha-1-0', 'indev-0-9'].forEach(postId => {
+      const count = likesData[postId] || 0;
+      const isLiked = localStorage.getItem('liked_' + postId) === 'true';
       
-      <button type="submit" class="btn" style="width: 100%; margin-top: 8px;">Accedi</button>
-    </form>
-    
-    <p id="auth-error" style="color: #f87171; font-size: 0.85rem; margin-top: 14px; text-align: center; margin-bottom: 0;"></p>
-  </div>
-</div>
-
-<!-- FIREBASE SCRIPT -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { 
-    getAuth, 
-    onAuthStateChanged, 
-    signInWithEmailAndPassword, 
-    signOut 
-  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { 
-    getFirestore, 
-    collection, 
-    addDoc, 
-    doc,
-    updateDoc,
-    arrayUnion,
-    arrayRemove,
-    onSnapshot, 
-    query, 
-    orderBy 
-  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-  // Configurazione Firebase Progetto Annunci
-  const firebaseConfig = {
-    apiKey: "AIzaSyCRaroglaWMfO0NiOqUQ5pcKUl49Uuz7Tw",
-    authDomain: "teenagersitacards-post.firebaseapp.com",
-    projectId: "teenagersitacards-post",
-    storageBucket: "teenagersitacards-post.firebasestorage.app",
-    messagingSenderId: "651917703980",
-    appId: "1:651917703980:web:d4c8f87b4645e97c46ca89"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  const ADMIN_UID = "IL_TUO_NUOVO_UID_QUI"; 
-
-  let currentUser = null;
-
-  // Post statici di riserva con gestione Like in LocalStorage
-  const defaultPosts = [
-    {
-      id: "alpha-1-0",
-      titolo: "Alpha 1.0",
-      autore: "Fronte ★",
-      dataStr: "15/10/2026",
-      testo: "Aggiunti i livelli e inizio del gioco"
-    },
-    {
-      id: "indev-0-9",
-      titolo: "Indev 0.9",
-      autore: "Fronte ★",
-      dataStr: "10/10/2026",
-      testo: "Aggiunto local storage"
-    }
-  ];
-
-  onAuthStateChanged(auth, (user) => {
-    currentUser = user;
-    const authBtn = document.getElementById('auth-btn');
-    const adminPanel = document.getElementById('admin-panel');
-
-    if (user) {
-      let displayName = user.email ? user.email.split('@')[0] : "Utente";
+      const btn = document.getElementById('like-btn-' + postId);
+      const countSpan = document.getElementById('like-count-' + postId);
       
-      if (user.uid === ADMIN_UID) {
-        authBtn.innerText = "Esci (" + displayName + " ★)";
-        adminPanel.classList.remove('hidden');
-      } else {
-        authBtn.innerText = "Esci (" + displayName + ")";
-        adminPanel.classList.add('hidden');
+      if (countSpan) countSpan.innerText = '(' + count + ')';
+      if (btn) {
+        if (isLiked) {
+          btn.classList.add('liked');
+        } else {
+          btn.classList.remove('liked');
+        }
       }
-      authBtn.onclick = handleLogout;
+    });
+  }
+
+  window.toggleLike = function(postId) {
+    let likesData = JSON.parse(localStorage.getItem('teenagersita_likes') || '{}');
+    let isLiked = localStorage.getItem('liked_' + postId) === 'true';
+    
+    if (!likesData[postId]) likesData[postId] = 0;
+
+    if (isLiked) {
+      likesData[postId] = Math.max(0, likesData[postId] - 1);
+      localStorage.setItem('liked_' + postId, 'false');
     } else {
-      authBtn.innerText = "Accedi";
-      authBtn.onclick = openModal;
-      adminPanel.classList.add('hidden');
+      likesData[postId] += 1;
+      localStorage.setItem('liked_' + postId, 'true');
     }
-    
-    // Ricarica i post per aggiornare lo stato dei like
-    loadPosts();
-  });
 
-  window.openModal = function() {
-    document.getElementById('auth-error').innerText = "";
-    document.getElementById('auth-nickname').value = "";
-    document.getElementById('auth-password').value = "";
-    document.getElementById('auth-modal').classList.remove('hidden');
+    localStorage.setItem('teenagersita_likes', JSON.stringify(likesData));
+    updateLikesUI();
   };
 
-  window.closeModal = function() {
-    document.getElementById('auth-modal').classList.add('hidden');
-  };
-
-  window.handleAuthSubmit = async function(e) {
-    e.preventDefault();
-    const inputUser = document.getElementById('auth-nickname').value.trim();
-    const password = document.getElementById('auth-password').value;
-    const errorMsg = document.getElementById('auth-error');
-    errorMsg.innerText = "";
-
-    if (!inputUser) {
-      errorMsg.innerText = "Inserisci un nickname.";
-      return;
-    }
-
-    const cleanNick = inputUser.toLowerCase().replace(/[^a-z0-9_]/g, '');
-    const emailToUse = cleanNick + "@teenagersita.local";
-
-    try {
-      await signInWithEmailAndPassword(auth, emailToUse, password);
-      closeModal();
-    } catch (err) {
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
-        errorMsg.innerText = "Nickname o Password non corretti.";
-      } else {
-        errorMsg.innerText = "Errore di accesso: " + err.message;
-      }
-    }
-  };
-
-  window.handleLogout = function() {
-    signOut(auth);
-  };
-
-  window.publishPost = async function() {
-    if (!currentUser || currentUser.uid !== ADMIN_UID) {
-      alert("Non hai i permessi per pubblicare!");
-      return;
-    }
-
-    const title = document.getElementById('post-title').value.trim();
-    const imgUrl = document.getElementById('post-img-url').value.trim();
-    const text = document.getElementById('post-text').value.trim();
-
-    if (!title || !text) {
-      alert("Inserisci almeno titolo e testo!");
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, "annunci"), {
-        titolo: title,
-        immagine: imgUrl || null,
-        testo: text,
-        autore: "Fronte ★",
-        timestamp: new Date(),
-        likes: []
-      });
-
-      document.getElementById('post-title').value = "";
-      document.getElementById('post-img-url').value = "";
-      document.getElementById('post-text').value = "";
-      alert("Pubblicato con successo!");
-    } catch (e) {
-      alert("Errore durante la pubblicazione: " + e.message);
-    }
-  };
-
-  // Like unificato (supporta sia Firestore che i post locali di default)
-  window.toggleLike = async function(postId) {
-    if (!currentUser) {
-      alert("Devi effettuare l'accesso per mettere Mi piace!");
-      openModal();
-      return;
-    }
-
-    // Se è uno dei post predefiniti di riserva, salva il like in localStorage
-    if (postId.startsWith("alpha-") || postId.startsWith("indev-")) {
-      let localLikes = JSON.parse(localStorage.getItem('default_post_likes') || '{}');
-      if (!localLikes[postId]) localLikes[postId] = [];
-      
-      const userIdx = localLikes[postId].indexOf(currentUser.uid);
-      if (userIdx > -1) {
-        localLikes[postId].splice(userIdx, 1);
-      } else {
-        localLikes[postId].push(currentUser.uid);
-      }
-      localStorage.setItem('default_post_likes', JSON.stringify(localLikes));
-      loadPosts();
-      return;
-    }
-
-    // Altrimenti aggiorna su Firestore
-    const postRef = doc(db, "annunci", postId);
-    try {
-      const btn = document.getElementById(`like-btn-${postId}`);
-      const isLiked = btn.classList.contains("liked");
-
-      if (isLiked) {
-        await updateDoc(postRef, {
-          likes: arrayRemove(currentUser.uid)
-        });
-      } else {
-        await updateDoc(postRef, {
-          likes: arrayUnion(currentUser.uid)
-        });
-      }
-    } catch (e) {
-      console.error("Errore like:", e);
-    }
-  };
-
-  function renderDefaultPosts(container) {
-    const localLikes = JSON.parse(localStorage.getItem('default_post_likes') || '{}');
-    
-    defaultPosts.forEach((post) => {
-      const likesArray = localLikes[post.id] || [];
-      const userHasLiked = currentUser && likesArray.includes(currentUser.uid);
-      const likeCount = likesArray.length;
-
-      const article = document.createElement('article');
-      article.className = 'glass';
-
-      article.innerHTML = `
-        <h2>${post.titolo}</h2>
-        <span class="post-info">Pubblicato il ${post.dataStr} da <strong>${post.autore}</strong></span>
-        <p>${post.testo}</p>
-        <div>
-          <button id="like-btn-${post.id}" class="btn btn-like ${userHasLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
-            👍 Mi piace <span style="font-size: 0.9rem; opacity: 0.9;">(${likeCount})</span>
-          </button>
-        </div>
-      `;
-      container.appendChild(article);
-    });
-  }
-
-  function loadPosts() {
-    const q = query(collection(db, "annunci"), orderBy("timestamp", "desc"));
-
-    onSnapshot(q, (snapshot) => {
-      const container = document.getElementById('posts-container');
-      container.innerHTML = "";
-
-      // Mostra i post predefiniti (Alpha 1.0 e Indev 0.9)
-      renderDefaultPosts(container);
-
-      // Aggiunge eventuali altri post pubblicati dinamicamente su Firestore
-      if (!snapshot.empty) {
-        snapshot.docs.forEach((docSnap) => {
-          const data = docSnap.data();
-          const postId = docSnap.id;
-          
-          let dateStr = "Di recente";
-          if (data.timestamp) {
-            const d = data.timestamp.toDate();
-            dateStr = `${d.toLocaleDateString('it-IT')} alle ${d.toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'})}`;
-          }
-
-          const likesArray = data.likes || [];
-          const userHasLiked = currentUser && likesArray.includes(currentUser.uid);
-          const likeCount = likesArray.length;
-
-          const article = document.createElement('article');
-          article.className = 'glass';
-
-          let imgHTML = data.immagine ? `<img src="${data.immagine}" alt="${data.titolo}" class="post-img">` : '';
-          const paragraphs = data.testo.split('\n').map(p => `<p>${p}</p>`).join('');
-
-          article.innerHTML = `
-            <h2>${data.titolo}</h2>
-            <span class="post-info">Pubblicato il ${dateStr} da <strong>${data.autore || 'Fronte ★'}</strong></span>
-            ${imgHTML}
-            ${paragraphs}
-            <div>
-              <button id="like-btn-${postId}" class="btn btn-like ${userHasLiked ? 'liked' : ''}" onclick="toggleLike('${postId}')">
-                👍 Mi piace <span style="font-size: 0.9rem; opacity: 0.9;">(${likeCount})</span>
-              </button>
-            </div>
-          `;
-
-          container.appendChild(article);
-        });
-      }
-    }, (err) => {
-      // In caso di problemi di connessione a Firestore, carica comunque i post predefiniti
-      const container = document.getElementById('posts-container');
-      container.innerHTML = "";
-      renderDefaultPosts(container);
-    });
-  }
-
-  loadPosts();
+  // Caricamento iniziale dello stato dei like
+  updateLikesUI();
 </script>
 </body>
 </html>
