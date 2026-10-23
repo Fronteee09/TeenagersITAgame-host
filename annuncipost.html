@@ -70,8 +70,6 @@
   }
 
   .btn:active { filter: brightness(.9); }
-  .btn:focus-visible, a:focus-visible { outline: 3px solid #8fd0ff; outline-offset: 2px; }
-
   .btn-secondary {
     background: linear-gradient(180deg, rgba(80,160,255,0.3) 0%, rgba(20,60,120,0.5) 100%);
     border: 1px solid rgba(140,200,255,0.4);
@@ -81,11 +79,14 @@
   .btn-like {
     min-height: 40px;
     padding: 8px 16px;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     margin-top: 10px;
     background: linear-gradient(180deg, rgba(80,160,255,0.4) 0%, rgba(20,60,120,0.6) 100%);
     border: 1px solid rgba(140,200,255,0.5);
     transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .btn-like.liked {
@@ -94,16 +95,13 @@
     box-shadow: 0 0 16px rgba(59,130,246,0.6), inset 0 1px 0 rgba(255,255,255,0.7);
   }
 
-  /* STILI PANNELLO ADMIN CREAZIONE POST */
+  /* ADMIN PANEL */
   .admin-panel {
     border-color: #60a5fa;
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
   }
 
-  .admin-panel h2 {
-    color: #93c5fd;
-    margin-bottom: 12px;
-  }
+  .admin-panel h2 { color: #93c5fd; margin-bottom: 12px; }
 
   .admin-input, .admin-textarea {
     width: 100%;
@@ -123,10 +121,7 @@
     box-shadow: 0 0 8px rgba(96, 165, 250, 0.5);
   }
 
-  .admin-textarea {
-    height: 120px;
-    resize: vertical;
-  }
+  .admin-textarea { height: 120px; resize: vertical; }
 
   h2 { margin: 0 0 4px; font-size: 1.4rem; color: #fff; text-shadow: 0 0 8px rgba(90,180,255,.6); }
   .post-info { font-size: 0.85rem; color: #8fb4dc; margin-bottom: 12px; display: block; }
@@ -141,7 +136,7 @@
     margin-bottom: 14px;
   }
 
-  /* MODALE OVERLAY LOGIN */
+  /* MODALE AUTH */
   .modal-overlay {
     position: fixed;
     top: 0;
@@ -158,11 +153,7 @@
     padding: 20px;
   }
 
-  .modal-card {
-    width: 100%;
-    max-width: 420px;
-    position: relative;
-  }
+  .modal-card { width: 100%; max-width: 420px; position: relative; }
 
   .modal-close {
     position: absolute;
@@ -174,11 +165,28 @@
     font-size: 1.5rem;
     cursor: pointer;
   }
-
   .modal-close:hover { color: #fff; }
 
-  .hidden { display: none !important; }
+  .tabs {
+    display: flex;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(140,200,255,0.3);
+  }
 
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    color: #8fb4dc;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+  }
+
+  .tab-btn.active { color: #fff; border-bottom-color: #60a5fa; }
+
+  .hidden { display: none !important; }
   footer { text-align: center; color: #8fb4dc; font-size: .9rem; padding: 10px 0 40px; }
 </style>
 </head>
@@ -190,20 +198,20 @@
     <p>Tutti gli aggiornamenti sul progetto TeenagersITA</p>
     <div class="header-buttons">
       <a class="btn" href="index.html">Torna alla Home</a>
-      <button id="auth-btn" class="btn btn-secondary" onclick="toggleLoginModal(true)">Accedi Admin</button>
+      <button id="auth-btn" class="btn btn-secondary" onclick="openModal('login')">Accedi / Registrati</button>
     </div>
   </header>
 
-  <!-- FORM PUBBLICAZIONE (Nascosto di default, visibile solo se riconosciuto come Admin) -->
+  <!-- PANNELLO ADMIN (Visibile solo a te) -->
   <div id="admin-panel" class="glass admin-panel hidden">
     <h2>✍️ Pubblica un nuovo Annuncio</h2>
     <input type="text" id="post-title" class="admin-input" placeholder="Titolo del post...">
-    <input type="text" id="post-img-url" class="admin-input" placeholder="Nome o URL Immagine (es. copertinalivelliupdate1.png) - Opzionale">
+    <input type="text" id="post-img-url" class="admin-input" placeholder="URL Immagine (opzionale)">
     <textarea id="post-text" class="admin-textarea" placeholder="Scrivi il contenuto dell'annuncio..."></textarea>
     <button class="btn" onclick="publishPost()">Pubblica Post</button>
   </div>
 
-  <!-- CONTENITORE DINAMICO DEI POST -->
+  <!-- POSTS CONTAINER -->
   <div id="posts-container">
     <p style="text-align: center; color: #bcd9f7;">Caricamento post in corso...</p>
   </div>
@@ -212,20 +220,24 @@
 
 </div>
 
-<!-- FINETRA MODALE DI LOGIN INTEGRATA -->
-<div id="login-modal" class="modal-overlay hidden">
+<!-- MODALE LOGIN / REGISTRAZIONE -->
+<div id="auth-modal" class="modal-overlay hidden">
   <div class="glass modal-card">
-    <button class="modal-close" onclick="toggleLoginModal(false)">&times;</button>
-    <h2 style="text-align: center; margin-bottom: 16px;">🔑 Accesso Amministratore</h2>
+    <button class="modal-close" onclick="closeModal()">&times;</button>
     
-    <form onsubmit="handleLoginSubmit(event)">
-      <input type="email" id="login-email" class="admin-input" placeholder="Email" required>
-      <input type="password" id="login-password" class="admin-input" placeholder="Password" required>
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-login" onclick="switchAuthMode('login')">Accedi</button>
+      <button class="tab-btn" id="tab-register" onclick="switchAuthMode('register')">Registrati</button>
+    </div>
+
+    <form onsubmit="handleAuthSubmit(event)">
+      <input type="email" id="auth-email" class="admin-input" placeholder="Email" autocomplete="email" required>
+      <input type="password" id="auth-password" class="admin-input" placeholder="Password" autocomplete="current-password" required>
       
-      <button type="submit" class="btn" style="width: 100%; margin-top: 8px;">Accedi</button>
+      <button type="submit" id="auth-submit-btn" class="btn" style="width: 100%; margin-top: 8px;">Accedi</button>
     </form>
     
-    <p id="login-error" style="color: #f87171; font-size: 0.85rem; margin-top: 14px; text-align: center; margin-bottom: 0;"></p>
+    <p id="auth-error" style="color: #f87171; font-size: 0.85rem; margin-top: 14px; text-align: center; margin-bottom: 0;"></p>
   </div>
 </div>
 
@@ -236,12 +248,17 @@
     getAuth, 
     onAuthStateChanged, 
     signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword, 
     signOut 
   } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   import { 
     getFirestore, 
     collection, 
     addDoc, 
+    doc,
+    updateDoc,
+    arrayUnion,
+    arrayRemove,
     onSnapshot, 
     query, 
     orderBy 
@@ -261,12 +278,11 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // Il tuo User UID per riconoscere l'Admin
   const ADMIN_UID = "LRS2V4mx1kOKGZl65J1DYzqRX9q1"; 
-
   let currentUser = null;
+  let authMode = 'login'; // 'login' o 'register'
 
-  // Ascolta lo stato dell'autenticazione Firebase
+  // Gestione stato Auth
   onAuthStateChanged(auth, (user) => {
     currentUser = user;
     const authBtn = document.getElementById('auth-btn');
@@ -275,76 +291,105 @@
     if (user) {
       if (user.uid === ADMIN_UID) {
         authBtn.innerText = "Esci (Fronte ★)";
-        authBtn.onclick = handleLogout;
         adminPanel.classList.remove('hidden');
       } else {
-        // Se si collega un utente normale non admin
-        authBtn.innerText = "Esci";
-        authBtn.onclick = handleLogout;
+        authBtn.innerText = "Esci (" + user.email.split('@')[0] + ")";
         adminPanel.classList.add('hidden');
       }
+      authBtn.onclick = handleLogout;
     } else {
-      authBtn.innerText = "Accedi Admin";
-      authBtn.onclick = () => toggleLoginModal(true);
+      authBtn.innerText = "Accedi / Registrati";
+      authBtn.onclick = () => openModal('login');
       adminPanel.classList.add('hidden');
     }
   });
 
-  // Apri / Chiudi la finestra modale di login
-  window.toggleLoginModal = function(show) {
-    const modal = document.getElementById('login-modal');
-    const errorMsg = document.getElementById('login-error');
-    errorMsg.innerText = "";
+  window.openModal = function(mode) {
+    authMode = mode;
+    document.getElementById('auth-error').innerText = "";
+    document.getElementById('auth-email').value = "";
+    document.getElementById('auth-password').value = "";
+    
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const submitBtn = document.getElementById('auth-submit-btn');
 
-    if (show) {
-      modal.classList.remove('hidden');
+    if (mode === 'login') {
+      tabLogin.classList.add('active');
+      tabRegister.classList.remove('active');
+      submitBtn.innerText = "Accedi";
     } else {
-      modal.classList.add('hidden');
+      tabRegister.classList.add('active');
+      tabLogin.classList.remove('active');
+      submitBtn.innerText = "Registrati";
+    }
+
+    document.getElementById('auth-modal').classList.remove('hidden');
+  };
+
+  window.switchAuthMode = function(mode) {
+    authMode = mode;
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const submitBtn = document.getElementById('auth-submit-btn');
+    document.getElementById('auth-error').innerText = "";
+
+    if (mode === 'login') {
+      tabLogin.classList.add('active');
+      tabRegister.classList.remove('active');
+      submitBtn.innerText = "Accedi";
+    } else {
+      tabRegister.classList.add('active');
+      tabLogin.classList.remove('active');
+      submitBtn.innerText = "Registrati";
     }
   };
 
-  // Esegui il Login
-  window.handleLoginSubmit = async function(e) {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    const errorMsg = document.getElementById('login-error');
+  window.closeModal = function() {
+    document.getElementById('auth-modal').classList.add('hidden');
+  };
 
+  window.handleAuthSubmit = async function(e) {
+    e.preventDefault();
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-password').value;
+    const errorMsg = document.getElementById('auth-error');
     errorMsg.innerText = "";
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // Pulisce il form e chiude la finestra
-      document.getElementById('login-email').value = "";
-      document.getElementById('login-password').value = "";
-      toggleLoginModal(false);
+      if (authMode === 'login') {
+        await signInWithEmailAndPassword(auth, email, password);
+      } else {
+        await createUserWithEmailAndPassword(auth, email, password);
+      }
+      closeModal();
     } catch (err) {
       if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
-        errorMsg.innerText = "Email o Password non corrette.";
+        errorMsg.innerText = "Email o Password errate.";
+      } else if (err.code === 'auth/email-already-in-use') {
+        errorMsg.innerText = "Email già registrata.";
+      } else if (err.code === 'auth/weak-password') {
+        errorMsg.innerText = "La password deve avere almeno 6 caratteri.";
       } else {
-        errorMsg.innerText = "Errore di accesso: " + err.message;
+        errorMsg.innerText = "Errore: " + err.message;
       }
     }
   };
 
-  // Logout
   window.handleLogout = function() {
     signOut(auth);
   };
 
-  // Pubblica un nuovo annuncio
+  // Pubblica Post (Solo Admin)
   window.publishPost = async function() {
-    if (!currentUser || currentUser.uid !== ADMIN_UID) {
-      alert("Operazione non consentita! Devi essere autenticato come Admin.");
-      return;
-    }
+    if (!currentUser || currentUser.uid !== ADMIN_UID) return;
 
     const title = document.getElementById('post-title').value.trim();
     const imgUrl = document.getElementById('post-img-url').value.trim();
     const text = document.getElementById('post-text').value.trim();
 
     if (!title || !text) {
-      alert("Inserisci almeno il titolo e il testo del post!");
+      alert("Inserisci almeno titolo e testo!");
       return;
     }
 
@@ -354,21 +399,53 @@
         immagine: imgUrl || null,
         testo: text,
         autore: "Fronte ★",
-        timestamp: new Date()
+        timestamp: new Date(),
+        likes: []
       });
 
-      // Reset campi di testo
       document.getElementById('post-title').value = "";
       document.getElementById('post-img-url').value = "";
       document.getElementById('post-text').value = "";
-      
-      alert("Annuncio pubblicato con successo!");
+      alert("Pubblicato con successo!");
     } catch (e) {
-      alert("Errore durante la pubblicazione: " + e.message);
+      alert("Errore: " + e.message);
     }
   };
 
-  // Carica in tempo reale tutti i post dal database
+  // Gestione Like Persistenti
+  window.toggleLike = async function(postId) {
+    if (!currentUser) {
+      alert("Devi effettuare l'accesso per mettere Mi piace!");
+      openModal('login');
+      return;
+    }
+
+    const postRef = doc(db, "annunci", postId);
+    // Recupera lo stato attuale del post o usa un controllo rapido
+    // Per semplicità verifichiamo direttamente su Firestore con un update atomico
+    // In alternativa, controlliamo se l'utente ha già messo like salvandolo nell'array 'likes'
+    try {
+      // Semplificazione: gestiamo l'aggiunta/rimozione tramite arrayUnion / arrayRemove
+      // Per farlo in modo pulito con il click del bottone:
+      // Verifichiamo se il bottone ha la classe liked
+      const btn = document.getElementById(`like-btn-${postId}`);
+      const isLiked = btn.classList.contains("liked");
+
+      if (isLiked) {
+        await updateDoc(postRef, {
+          likes: arrayRemove(currentUser.uid)
+        });
+      } else {
+        await updateDoc(postRef, {
+          likes: arrayUnion(currentUser.uid)
+        });
+      }
+    } catch (e) {
+      console.error("Errore like:", e);
+    }
+  };
+
+  // Caricamento Post in tempo reale
   function loadPosts() {
     const q = query(collection(db, "annunci"), orderBy("timestamp", "desc"));
 
@@ -383,12 +460,17 @@
 
       snapshot.docs.forEach((docSnap) => {
         const data = docSnap.data();
+        const postId = docSnap.id;
         
         let dateStr = "Di recente";
         if (data.timestamp) {
           const d = data.timestamp.toDate();
           dateStr = `Pubblicato il ${d.toLocaleDateString('it-IT')} alle ${d.toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'})}`;
         }
+
+        const likesArray = data.likes || [];
+        const userHasLiked = currentUser && likesArray.includes(currentUser.uid);
+        const likeCount = likesArray.length;
 
         const article = document.createElement('article');
         article.className = 'glass';
@@ -402,8 +484,8 @@
           ${imgHTML}
           ${paragraphs}
           <div>
-            <button class="btn btn-like" onclick="toggleLike(this)" aria-label="Mi Piace">
-              👍
+            <button id="like-btn-${postId}" class="btn btn-like ${userHasLiked ? 'liked' : ''}" onclick="toggleLike('${postId}')">
+              👍 Mi piace <span style="font-size: 0.9rem; opacity: 0.9;">(${likeCount})</span>
             </button>
           </div>
         `;
@@ -412,10 +494,6 @@
       });
     });
   }
-
-  window.toggleLike = function(btn) {
-    btn.classList.toggle("liked");
-  };
 
   loadPosts();
 </script>
