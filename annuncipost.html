@@ -202,7 +202,7 @@
     </div>
   </header>
 
-  <!-- PANNELLO ADMIN (Visibile solo a te) -->
+  <!-- PANNELLO ADMIN (Visibile solo al tuo UID) -->
   <div id="admin-panel" class="glass admin-panel hidden">
     <h2>✍️ Pubblica un nuovo Annuncio</h2>
     <input type="text" id="post-title" class="admin-input" placeholder="Titolo del post...">
@@ -231,8 +231,8 @@
     </div>
 
     <form onsubmit="handleAuthSubmit(event)">
-      <input type="text" id="auth-nickname" class="admin-input" placeholder="Il tuo Nickname (es. Fronte)" required>
-      <input type="password" id="auth-password" class="admin-input" placeholder="Password (min. 6 caratteri)" required>
+      <input type="text" id="auth-nickname" class="admin-input" placeholder="Il tuo Nickname (es. Fronte)" required autocomplete="username">
+      <input type="password" id="auth-password" class="admin-input" placeholder="Password (min. 6 caratteri)" required autocomplete="current-password">
       
       <button type="submit" id="auth-submit-btn" class="btn" style="width: 100%; margin-top: 8px;">Accedi</button>
     </form>
@@ -278,25 +278,27 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  const ADMIN_UID = "LRS2V4mx1kOKGZl65J1DYzqRX9q1"; 
+  // IL TUO NUOVO UID AGGIORNATO
+  const ADMIN_UID = "HHWZAArOZyQf5FqxYftVT3dT10a2"; 
+
   let currentUser = null;
   let authMode = 'login'; // 'login' o 'register'
 
-  // Gestione stato Auth
+  // Gestione stato Auth in tempo reale
   onAuthStateChanged(auth, (user) => {
     currentUser = user;
     const authBtn = document.getElementById('auth-btn');
     const adminPanel = document.getElementById('admin-panel');
 
     if (user) {
-      // Estrae il nickname pulito dall'email interna
-      const nickname = user.email.split('@')[0];
+      // Estrae il nickname pulito dall'email interna o mostra l'email se reale
+      let displayName = user.email.split('@')[0];
       
       if (user.uid === ADMIN_UID) {
-        authBtn.innerText = "Esci (Fronte ★)";
+        authBtn.innerText = "Esci (" + displayName + " ★)";
         adminPanel.classList.remove('hidden');
       } else {
-        authBtn.innerText = "Esci (" + nickname + ")";
+        authBtn.innerText = "Esci (" + displayName + ")";
         adminPanel.classList.add('hidden');
       }
       authBtn.onclick = handleLogout;
@@ -354,32 +356,35 @@
 
   window.handleAuthSubmit = async function(e) {
     e.preventDefault();
-    const nicknameInput = document.getElementById('auth-nickname').value.trim();
+    const inputUser = document.getElementById('auth-nickname').value.trim();
     const password = document.getElementById('auth-password').value;
     const errorMsg = document.getElementById('auth-error');
     errorMsg.innerText = "";
 
-    if (!nicknameInput) {
+    if (!inputUser) {
       errorMsg.innerText = "Inserisci un nickname.";
       return;
     }
 
-    // Converte il nickname in formato email sicuro per Firebase Auth
-    const cleanNick = nicknameInput.toLowerCase().replace(/[^a-z0-9_]/g, '');
-    const internalEmail = cleanNick + "@teenagersita.local";
+    // Se l'utente inserisce una vera email usa quella, altrimenti converte il nickname
+    let emailToUse = inputUser;
+    if (!inputUser.includes('@')) {
+      const cleanNick = inputUser.toLowerCase().replace(/[^a-z0-9_]/g, '');
+      emailToUse = cleanNick + "@teenagersita.local";
+    }
 
     try {
       if (authMode === 'login') {
-        await signInWithEmailAndPassword(auth, internalEmail, password);
+        await signInWithEmailAndPassword(auth, emailToUse, password);
       } else {
-        await createUserWithEmailAndPassword(auth, internalEmail, password);
+        await createUserWithEmailAndPassword(auth, emailToUse, password);
       }
       closeModal();
     } catch (err) {
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
-        errorMsg.innerText = "Nickname o Password errati.";
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+        errorMsg.innerText = "Nickname o Password non corretti.";
       } else if (err.code === 'auth/email-already-in-use') {
-        errorMsg.innerText = "Questo nickname è già occupato! Scegline un altro.";
+        errorMsg.innerText = "Questo nickname è già registrato!";
       } else if (err.code === 'auth/weak-password') {
         errorMsg.innerText = "La password deve avere almeno 6 caratteri.";
       } else {
@@ -392,9 +397,12 @@
     signOut(auth);
   };
 
-  // Pubblica Post (Solo Admin)
+  // Pubblica Post (Consentito solo al tuo UID)
   window.publishPost = async function() {
-    if (!currentUser || currentUser.uid !== ADMIN_UID) return;
+    if (!currentUser || currentUser.uid !== ADMIN_UID) {
+      alert("Non hai i permessi per pubblicare!");
+      return;
+    }
 
     const title = document.getElementById('post-title').value.trim();
     const imgUrl = document.getElementById('post-img-url').value.trim();
@@ -420,11 +428,11 @@
       document.getElementById('post-text').value = "";
       alert("Pubblicato con successo!");
     } catch (e) {
-      alert("Errore: " + e.message);
+      alert("Errore durante la pubblicazione: " + e.message);
     }
   };
 
-  // Gestione Like Persistenti
+  // Gestione Like Persistenti su Firestore
   window.toggleLike = async function(postId) {
     if (!currentUser) {
       alert("Devi effettuare l'accesso per mettere Mi piace!");
