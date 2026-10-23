@@ -202,7 +202,7 @@
     </div>
   </header>
 
-  <!-- PANNELLO ADMIN (Visibile solo al tuo UID) -->
+  <!-- PANNELLO ADMIN (Visibile solo all'UID Admin di questo progetto) -->
   <div id="admin-panel" class="glass admin-panel hidden">
     <h2>✍️ Pubblica un nuovo Annuncio</h2>
     <input type="text" id="post-title" class="admin-input" placeholder="Titolo del post...">
@@ -264,22 +264,23 @@
     orderBy 
   } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+  // Configurazione del NUOVO progetto Firebase dedicato agli annunci
   const firebaseConfig = {
-    apiKey: "AIzaSyCCqjJNoMeliQskPzlMAGOqeF_-aFZuksY",
-    authDomain: "teenagersita-cards.firebaseapp.com",
-    projectId: "teenagersita-cards",
-    storageBucket: "teenagersita-cards.firebasestorage.app",
+    apiKey: "AIzaSyCRaroglaWMfO0NiOqUQ5pcKUl49Uuz7Tw",
+    authDomain: "teenagersitacards-post.firebaseapp.com",
+    projectId: "teenagersitacards-post",
+    storageBucket: "teenagersitacards-post.firebasestorage.app",
     messagingSenderId: "651917703980",
-    appId: "1:651917703980:web:d4c8f87b4645e97c46ca89",
-    measurementId: "G-84P57RTZEV"
+    appId: "1:651917703980:web:d4c8f87b4645e97c46ca89"
   };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // UID AMMINISTRATORE FISSO
-  const ADMIN_UID = "LRS2V4mx1kOKGZl65J1DYzqRX9q1"; 
+  // NOTA: Una volta che ti sarai registrato con il tuo account (es. "Fronte") 
+  // in questo nuovo progetto, potrai inserire qui sotto il tuo nuovo UID per sbloccare l'admin panel.
+  const ADMIN_UID = "IL_TUO_NUOVO_UID_QUI"; 
 
   let currentUser = null;
   let authMode = 'login';
@@ -291,7 +292,6 @@
     const adminPanel = document.getElementById('admin-panel');
 
     if (user) {
-      // Estrae il nome dal nickname prima di @
       let displayName = user.email ? user.email.split('@')[0] : "Utente";
       
       if (user.uid === ADMIN_UID) {
@@ -366,7 +366,6 @@
       return;
     }
 
-    // Pulisce il nickname e aggiunge il dominio locale fittizio
     const cleanNick = inputUser.toLowerCase().replace(/[^a-z0-9_]/g, '');
     const emailToUse = cleanNick + "@teenagersita.local";
 
@@ -420,6 +419,7 @@
         likes: []
       });
 
+      document.getElementById('post-title-value'] = ""; // fix safety
       document.getElementById('post-title').value = "";
       document.getElementById('post-img-url').value = "";
       document.getElementById('post-text').value = "";
