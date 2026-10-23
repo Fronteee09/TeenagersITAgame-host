@@ -220,7 +220,7 @@
 
 </div>
 
-<!-- MODALE LOGIN / REGISTRAZIONE -->
+<!-- MODALE NICKNAME & PASSWORD -->
 <div id="auth-modal" class="modal-overlay hidden">
   <div class="glass modal-card">
     <button class="modal-close" onclick="closeModal()">&times;</button>
@@ -231,8 +231,8 @@
     </div>
 
     <form onsubmit="handleAuthSubmit(event)">
-      <input type="email" id="auth-email" class="admin-input" placeholder="Email" autocomplete="email" required>
-      <input type="password" id="auth-password" class="admin-input" placeholder="Password" autocomplete="current-password" required>
+      <input type="text" id="auth-nickname" class="admin-input" placeholder="Il tuo Nickname (es. Fronte)" required>
+      <input type="password" id="auth-password" class="admin-input" placeholder="Password (min. 6 caratteri)" required>
       
       <button type="submit" id="auth-submit-btn" class="btn" style="width: 100%; margin-top: 8px;">Accedi</button>
     </form>
@@ -289,11 +289,14 @@
     const adminPanel = document.getElementById('admin-panel');
 
     if (user) {
+      // Estrae il nickname pulito dall'email interna
+      const nickname = user.email.split('@')[0];
+      
       if (user.uid === ADMIN_UID) {
         authBtn.innerText = "Esci (Fronte ★)";
         adminPanel.classList.remove('hidden');
       } else {
-        authBtn.innerText = "Esci (" + user.email.split('@')[0] + ")";
+        authBtn.innerText = "Esci (" + nickname + ")";
         adminPanel.classList.add('hidden');
       }
       authBtn.onclick = handleLogout;
@@ -307,7 +310,7 @@
   window.openModal = function(mode) {
     authMode = mode;
     document.getElementById('auth-error').innerText = "";
-    document.getElementById('auth-email').value = "";
+    document.getElementById('auth-nickname').value = "";
     document.getElementById('auth-password').value = "";
     
     const tabLogin = document.getElementById('tab-login');
@@ -351,23 +354,32 @@
 
   window.handleAuthSubmit = async function(e) {
     e.preventDefault();
-    const email = document.getElementById('auth-email').value;
+    const nicknameInput = document.getElementById('auth-nickname').value.trim();
     const password = document.getElementById('auth-password').value;
     const errorMsg = document.getElementById('auth-error');
     errorMsg.innerText = "";
 
+    if (!nicknameInput) {
+      errorMsg.innerText = "Inserisci un nickname.";
+      return;
+    }
+
+    // Converte il nickname in formato email sicuro per Firebase Auth
+    const cleanNick = nicknameInput.toLowerCase().replace(/[^a-z0-9_]/g, '');
+    const internalEmail = cleanNick + "@teenagersita.local";
+
     try {
       if (authMode === 'login') {
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(auth, internalEmail, password);
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        await createUserWithEmailAndPassword(auth, internalEmail, password);
       }
       closeModal();
     } catch (err) {
       if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
-        errorMsg.innerText = "Email o Password errate.";
+        errorMsg.innerText = "Nickname o Password errati.";
       } else if (err.code === 'auth/email-already-in-use') {
-        errorMsg.innerText = "Email già registrata.";
+        errorMsg.innerText = "Questo nickname è già occupato! Scegline un altro.";
       } else if (err.code === 'auth/weak-password') {
         errorMsg.innerText = "La password deve avere almeno 6 caratteri.";
       } else {
@@ -421,13 +433,7 @@
     }
 
     const postRef = doc(db, "annunci", postId);
-    // Recupera lo stato attuale del post o usa un controllo rapido
-    // Per semplicità verifichiamo direttamente su Firestore con un update atomico
-    // In alternativa, controlliamo se l'utente ha già messo like salvandolo nell'array 'likes'
     try {
-      // Semplificazione: gestiamo l'aggiunta/rimozione tramite arrayUnion / arrayRemove
-      // Per farlo in modo pulito con il click del bottone:
-      // Verifichiamo se il bottone ha la classe liked
       const btn = document.getElementById(`like-btn-${postId}`);
       const isLiked = btn.classList.contains("liked");
 
