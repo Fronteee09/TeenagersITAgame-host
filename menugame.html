@@ -3,8 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="refresh" content="0; url=https://fronteee09.github.io/TeenagersITAgamemenu/">
 <title>Menu Gioco - TeenagersITA</title>
 <link rel="icon" href="teenagersitalogo2.png">
+<script>
+  // Reindirizzamento automatico alla Sala Giochi esterna
+  window.location.href = "https://fronteee09.github.io/TeenagersITAgamemenu/";
+</script>
 <style>
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
@@ -31,7 +36,6 @@
     position: relative;
     width: 100%;
     max-width: 520px;
-    min-height: auto;
     background: linear-gradient(180deg, rgba(120,190,255,.22), rgba(20,50,95,.35));
     border: 1px solid rgba(140,200,255,.45);
     border-radius: 20px;
@@ -46,7 +50,6 @@
     align-items: center;
   }
 
-  /* Tastino torna alla home in alto a destra */
   .home-btn {
     position: absolute;
     top: 16px;
@@ -63,42 +66,27 @@
     transition: all 0.2s ease;
   }
 
-  .home-btn:active {
-    transform: scale(0.95);
-  }
-
   h1 {
     margin: 10px 0 6px;
-    font-size: clamp(2rem, 8vw, 2.8rem);
+    font-size: clamp(1.8rem, 7vw, 2.5rem);
     line-height: 1.1;
     color: #fff;
     text-shadow: 0 0 14px rgba(90,180,255,.9), 0 2px 4px rgba(0,0,0,.8);
   }
 
   p {
-    margin: 0 0 28px;
+    margin: 0 0 20px;
     color: #bcd9f7;
-    font-size: 1.05rem;
-  }
-
-  .btn-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    width: 100%;
-    max-width: 320px;
+    font-size: 1rem;
   }
 
   .btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    min-height: 52px;
-    padding: 12px 24px;
+    min-height: 48px;
+    padding: 12px 28px;
     color: #fff;
-    font-size: 1.1rem;
     font-weight: 600;
     text-decoration: none;
     text-shadow: 0 1px 2px rgba(0,20,60,.9);
@@ -106,21 +94,10 @@
     border-radius: 999px;
     background: linear-gradient(180deg, #5cc0ff 0%, #1f7fd8 50%, #0d56ad 51%, #2a96e8 100%);
     box-shadow: 0 0 16px rgba(80,170,255,.6), inset 0 1px 0 rgba(255,255,255,.7);
-    transition: transform 0.15s ease, filter 0.15s ease;
   }
 
-  .btn:active {
-    transform: scale(0.97);
-    filter: brightness(.9);
-  }
-
-  .btn:focus-visible, a:focus-visible {
-    outline: 3px solid #8fd0ff;
-    outline-offset: 2px;
-  }
-
-  footer-tag {
-    margin-top: 28px;
+  .footer-tag {
+    margin-top: 24px;
     font-size: 0.85rem;
     color: #8fb4dc;
   }
@@ -129,15 +106,13 @@
 <body>
 
 <div class="fullscreen-box">
-  <!-- Tasto per tornare alla Home -->
   <a class="home-btn" href="index.html">🏠 Home</a>
 
-  <h1>Sala Giochi</h1>
-  <p>Scegli come desideri sfidare gli avversari:</p>
+  <h1>Reindirizzamento...</h1>
+  <p>Ti stiamo trasferendo alla Sala Giochi di TeenagersITA.</p>
 
-  <div class="btn-group">
-    <a class="btn" href="twoplayer.html">Due Giocatori</a>
-    <a class="btn" href="vsbot.html">Contro il Bot</a>
+  <div>
+    <a class="btn" href="https://fronteee09.github.io/TeenagersITAgamemenu/">Clicca qui se non vieni reindirizzato</a>
   </div>
 
   <div class="footer-tag">Carte TeenagersITA · Progetto ufficiale</div>
